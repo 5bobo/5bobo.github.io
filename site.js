@@ -3,7 +3,7 @@ const enlarged = viewer.querySelector('img');
 const description = viewer.querySelector('p');
 let opener;
 
-for (const figure of document.querySelectorAll('[data-figure]')) {
+for (const figure of document.querySelectorAll('[data-zoom-image]')) {
   const caption = figure.querySelector('figcaption').textContent;
   const link = figure.querySelector('a');
   const picture = link.querySelector('img');

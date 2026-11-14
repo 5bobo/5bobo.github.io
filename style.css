@@ -142,12 +142,12 @@ dialog p {font-size:.9rem;margin-top:8px}
 .back {display:block}
 
 /* Match image boxes and caption baselines within each group. */
-.study .pair figure[data-figure] > a,
+.study .pair figure[data-zoom-image] > a,
 .stage-sequence figure > a {
   position:relative;
   aspect-ratio:4/3;
 }
-.study .pair figure[data-figure] img,
+.study .pair figure[data-zoom-image] img,
 .stage-sequence figure img {
   position:absolute;
   inset:0;
@@ -157,7 +157,7 @@ dialog p {font-size:.9rem;margin-top:8px}
   object-fit:contain;
   padding:clamp(5px,1vw,12px);
 }
-#mpc .pair figure[data-figure] > a {aspect-ratio:16/10}
+#mpc .pair figure[data-zoom-image] > a {aspect-ratio:16/10}
 .study > h3 {
   margin:26px 0 6px;
   font-size:clamp(1.15rem,2vw,1.4rem);
