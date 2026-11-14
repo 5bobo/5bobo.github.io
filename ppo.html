@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reinforcement Learning for Autonomous Driving | Research Portfolio</title><link rel="stylesheet" href="style.css"><script src="site.js" defer></script></head>
+<body><a class="skip" href="#main">跳到正文</a>
+<header class="shell mast"><a class="brand" href="index.html">Research Portfolio</a><nav class="project-nav" aria-label="项目与源码"><div><a href="ppo.html">PPO 自动驾驶</a><a href="https://github.com/5bobo/CASE" aria-label="PPO 自动驾驶 GitHub">GitHub ↗</a></div><div><a href="lex.html">字典序规划</a><a href="https://github.com/5bobo/Lexicographic" aria-label="字典序规划 GitHub">GitHub ↗</a></div><div><a href="mpc.html">MPC 协同搬运</a><a href="https://github.com/5bobo/MPC" aria-label="MPC 协同搬运 GitHub">GitHub ↗</a></div></nav></header><main class="shell" id="main"><a class="back" href="index.html#research">← 研究项目</a><article class="study" id="ppo">
+<header><p class="method">PPO / CARLA</p><h1>无信号路口通行决策</h1><p>在 CARLA 中训练 PPO，通过车辆运动历史和语义 BEV 决定目标车速。</p></header><dl class="talk-track"><div><dt>研究问题</dt><dd>什么时候等待，什么时候通过？</dd></div><div><dt>我的做法</dt><dd>用历史运动和道路空间信息评估交互。</dd></div><div><dt>实验观察</dt><dd>5 个训练种子平均成功率为 96.8%。</dd></div></dl><nav class="chapter" aria-label="项目目录"><a href="#demos">演示</a><a href="#method">方法</a><a href="#ppo-results">结果</a><a href="#ablation">消融</a></nav>
+<h2 id="demos">闭环通行演示</h2>
+<div class="pair">
+<figure><video controls playsinline preload="none" poster="assets/case/crossing.webp" aria-label="减速接近后加速通过" src="assets/case/opportunistic-crossing.mp4"></video><figcaption>减速接近后加速通过 · 11.45 s</figcaption></figure>
+<figure><video controls playsinline preload="none" poster="assets/case/yield.webp" aria-label="低速等待后通过" src="assets/case/yield-then-cross.mp4"></video><figcaption>低速等待后通过 · 13.40 s</figcaption></figure>
+</div>
+<h2 id="method">决策架构</h2><ul class="notes"><li>输入：10 帧车辆运动历史与当前五通道语义 BEV。</li><li>融合：LSTM 编码历史，CNN 编码 BEV，带掩码的交叉注意力聚合有效周车。</li><li>执行：PPO 输出 0–15 m/s 目标速度，PID 跟踪路线和车速。</li></ul>
+<figure data-figure="case/architecture.png"><figcaption>项目原有架构图 · 观测、编码、融合与速度执行。</figcaption></figure>
+<h2 id="ppo-results">多种子评估</h2><ul class="notes"><li><strong>96.8% 平均成功率</strong> · 5 个训练种子，统一取第 1900 轮。</li><li>CARLA Town03 · 各模型复用同一组 50 个测试场景。</li><li>耗时比较使用五个模型共同成功的 43 个场景。</li></ul>
+<figure data-figure="case/multiseed-results.png"><figcaption>五种子训练曲线、测试结局与共同成功场景耗时。</figcaption></figure>
+<h2 id="ablation">消融实验</h2>
+<figure data-figure="case/ablation-learning-curves.png"><figcaption>六种配置的训练回报与验证曲线 · 训练种子均为 42。验证耗时按各检查点各自成功的场景统计。</figcaption></figure><figure class="ablation"><figcaption>六种配置在同一组 50 个场景上的测试结局 · seed 42</figcaption><ul class="ablation-legend"><li>成功</li><li>碰撞</li><li>超时</li></ul><ul class="bar-chart"><li><span>完整模型</span><span class="bar-track" aria-hidden="true"><i style="width:98%"></i><i style="width:2%"></i><i style="width:0%"></i></span><strong>49/50</strong><span class="visually-hidden">成功，碰撞 1，超时 0</span></li><li><span>均值聚合</span><span class="bar-track" aria-hidden="true"><i style="width:92%"></i><i style="width:8%"></i><i style="width:0%"></i></span><strong>46/50</strong><span class="visually-hidden">成功，碰撞 4，超时 0</span></li><li><span>单帧输入</span><span class="bar-track" aria-hidden="true"><i style="width:96%"></i><i style="width:2%"></i><i style="width:2%"></i></span><strong>48/50</strong><span class="visually-hidden">成功，碰撞 1，超时 1</span></li><li><span>BEV 置零</span><span class="bar-track" aria-hidden="true"><i style="width:96%"></i><i style="width:4%"></i><i style="width:0%"></i></span><strong>48/50</strong><span class="visually-hidden">成功，碰撞 2，超时 0</span></li><li><span>去 BEV + MLP</span><span class="bar-track" aria-hidden="true"><i style="width:72%"></i><i style="width:28%"></i><i style="width:0%"></i></span><strong>36/50</strong><span class="visually-hidden">成功，碰撞 14，超时 0</span></li><li><span>纯 MLP</span><span class="bar-track" aria-hidden="true"><i style="width:76%"></i><i style="width:24%"></i><i style="width:0%"></i></span><strong>38/50</strong><span class="visually-hidden">成功，碰撞 12，超时 0</span></li></ul></figure><p class="experiment-note">完整模型取第 1900 轮，其余配置取第 2000 轮。</p>
+<figure data-figure="case/ablation-evaluation.png"><figcaption>固定测试集的结局分布，以及六种配置均成功的 28 个场景上的耗时、纵向 jerk 和目标速度变化。</figcaption></figure>
+
+<h2>失败案例</h2><figure data-figure="case/failure-analysis.png"><figcaption>完整模型碰撞于 8.95 s，单帧配置于 25 s 超时。评估范围限于该仿真路口与固定自车路线。</figcaption></figure>
+</article><nav class="related" aria-label="其他研究"><a href="lex.html">字典序规划</a><a href="mpc.html">MPC 协同搬运</a></nav></main>
+<footer class="shell mast"><span>Robotics &amp; Autonomous Systems</span><a href="#main">返回顶部 ↑</a></footer>
+<dialog aria-label="科研图放大查看"><form method="dialog"><button>关闭图像 ×</button></form><img alt=""><p></p></dialog>
+</body></html>

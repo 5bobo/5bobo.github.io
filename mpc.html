@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multi-Robot Cooperative Planning with MPC | Research Portfolio</title><link rel="stylesheet" href="style.css"><script src="site.js" defer></script></head>
+<body><a class="skip" href="#main">跳到正文</a>
+<header class="shell mast"><a class="brand" href="index.html">Research Portfolio</a><nav class="project-nav" aria-label="项目与源码"><div><a href="ppo.html">PPO 自动驾驶</a><a href="https://github.com/5bobo/CASE" aria-label="PPO 自动驾驶 GitHub">GitHub ↗</a></div><div><a href="lex.html">字典序规划</a><a href="https://github.com/5bobo/Lexicographic" aria-label="字典序规划 GitHub">GitHub ↗</a></div><div><a href="mpc.html">MPC 协同搬运</a><a href="https://github.com/5bobo/MPC" aria-label="MPC 协同搬运 GitHub">GitHub ↗</a></div></nav></header><main class="shell" id="main"><a class="back" href="index.html#research">← 研究项目</a><article class="study" id="mpc">
+<header><p class="method">CVT / EMD / MPC</p><h1>多机器人协同搬运</h1><p>用 CVT 生成站位、EMD 分配机器人，再用两阶段 MPC 完成协同搬运。</p></header><dl class="talk-track"><div><dt>研究问题</dt><dd>怎样把货物轮廓转化为协同搬运轨迹？</dd></div><div><dt>我的做法</dt><dd>从生成站位到分配机器人，再滚动求解控制。</dd></div><div><dt>实验观察</dt><dd>历史仿真展示了接近货物、切换阶段与协同搬运。</dd></div></dl><nav class="chapter" aria-label="项目目录"><a href="#demos">演示</a><a href="#method">方法</a><a href="#mpc-results">结果</a></nav>
+<h2 id="demos">协同搬运仿真回放</h2><figure class="replay"><video controls playsinline preload="none" poster="assets/mpc/result5-poster.webp" src="assets/mpc/result5-replay.mp4" aria-label="多机器人协同搬运仿真"></video><figcaption>历史 result5 仿真 · 观察机器人接近站位、形成编队并向目标搬运。</figcaption></figure><h2 id="method">站位生成与机器人分配</h2><ul class="notes"><li>CVT：在货物边界内生成参考站位。</li><li>EMD：根据距离与近邻结构差异匹配机器人和站位。</li></ul>
+<div class="pair"><figure data-figure="mpc/cvt-stations.png"><figcaption>有界 CVT · 非凸区域的参考站位和分区。</figcaption></figure><figure data-figure="mpc/emd-assignment.png"><figcaption>EMD · 独立历史示例中的分配矩阵和对应关系。</figcaption></figure></div>
+<h2>两阶段滚动控制</h2><ul class="notes"><li>接近阶段：驶向分配站位并对齐朝向。</li><li>搬运阶段：保持编队并向目标移动。</li><li>每轮执行预测控制序列的首步，再根据更新状态重算。</li></ul>
+<h2 id="mpc-results">轨迹、误差与控制输入</h2><figure data-figure="mpc/transport-trajectory.png"><figcaption>历史 result6 · 接近站位与协同搬运轨迹。</figcaption></figure>
+
+<div class="pair"><figure data-figure="mpc/formation-error.png"><figcaption>result6 编队误差在阶段切换附近变化，随后逐渐收敛。</figcaption></figure><figure data-figure="mpc/without-orientation-trajectory.png"><figcaption>历史 result5 去除朝向项的探索记录。两个版本同时存在地图或实现差异。</figcaption></figure></div>
+<figure data-figure="mpc/velocity-curves.png"><figcaption>result6 · 线速度和角速度随阶段切换变化。</figcaption></figure><ul class="notes"><li>实验范围为集中式二维运动学仿真。</li><li>result5 与 result6 存在地图或实现差异，朝向项结果适合做定性观察。</li></ul>
+</article><nav class="related" aria-label="其他研究"><a href="ppo.html">PPO 自动驾驶</a><a href="lex.html">字典序规划</a></nav></main>
+<footer class="shell mast"><span>Robotics &amp; Autonomous Systems</span><a href="#main">返回顶部 ↑</a></footer>
+<dialog aria-label="科研图放大查看"><form method="dialog"><button>关闭图像 ×</button></form><img alt=""><p></p></dialog>
+</body></html>

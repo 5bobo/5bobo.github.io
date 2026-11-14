@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 412" role="img" aria-labelledby="title">
+<title id="title">Lexicographic MPC: protecting formation before optimizing navigation</title>
+<rect width="760" height="412" fill="#f3f6f8"/>
+<g font-family="system-ui, sans-serif" fill="#18212b">
+<text x="42" y="53" font-size="24" font-weight="650">Protecting the formation objective</text>
+<rect x="42" y="90" width="676" height="100" fill="white" stroke="#c3ced8"/>
+<text x="65" y="123" font-size="15" fill="#24577c">First solve</text>
+<text x="65" y="158" font-size="24" font-weight="600">Minimize formation cost</text>
+<text x="535" y="158" font-size="21" fill="#24577c">Save J₁*</text>
+<path d="M380 190v62m-7-8 7 8 7-8" fill="none" stroke="#24577c" stroke-width="2"/>
+<text x="400" y="228" font-size="18" fill="#24577c">Carry forward J₁ ≤ J₁* + ε</text>
+<rect x="42" y="258" width="676" height="100" fill="white" stroke="#c3ced8"/>
+<text x="65" y="291" font-size="15" fill="#24577c">Second solve</text>
+<text x="65" y="326" font-size="24" font-weight="600">Minimize navigation cost</text>
+<text x="485" y="326" font-size="19" fill="#24577c">Apply first control input</text>
+<text x="42" y="389" font-size="15">Kinematics, input bounds and obstacle constraints apply in both solves.</text>
+</g></svg>

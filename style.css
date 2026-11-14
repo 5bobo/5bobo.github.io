@@ -1,0 +1,162 @@
+:root {
+  color-scheme: light;
+  --paper:#fff;
+  --ink:#18212b;
+  --secondary:#515e6b;
+  --link:#24577c;
+  --rule:#dce2e7;
+  --field:#f3f6f8;
+  font-family:"Instrument Sans","Noto Sans SC","Noto Sans CJK SC",system-ui,sans-serif;
+  color:var(--ink);
+  background:var(--paper);
+}
+* {box-sizing:border-box}
+body,h1,h2,p,figure {margin:0}
+a {color:var(--link);text-underline-offset:.24em}
+a:hover {text-decoration-thickness:2px}
+:focus-visible {outline:2px solid var(--link);outline-offset:4px}
+[id] {scroll-margin-top:24px}
+.shell {width:min(1200px,calc(100% - 112px));margin-inline:auto}
+.mast {min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:14px;border-bottom:1px solid var(--rule);font-size:.9rem}
+.mast a {color:var(--ink);text-decoration:none}
+.mast a:hover {text-decoration:underline}
+.brand {font-weight:700}
+nav {display:flex;flex-wrap:wrap;gap:clamp(12px,3vw,34px)}
+p {font-size:1.0625rem;line-height:1.78;color:var(--secondary)}
+h1,h2 {font-weight:650;line-height:1.08;letter-spacing:-.039em;text-wrap:balance}
+.intro {padding:68px 0 48px}
+.intro h1 {text-wrap:initial;font-size:clamp(2.4rem,5.3vw,4.65rem);letter-spacing:-.055em}
+.intro p {margin-top:20px;max-width:42rem}
+.entry {border-top:1px solid var(--rule);display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(25px,6vw,88px);align-items:center;padding:42px 0}
+.entry-lex {grid-template-columns:minmax(0,7fr) minmax(0,5fr)}
+.entry-lex figure {grid-column:1;grid-row:1}
+.entry-lex .entry-copy {grid-column:2}
+.entry h2 {font-size:clamp(1.7rem,3.05vw,2.75rem);margin:8px 0 14px}
+.entry h2 a {color:inherit;text-decoration:none}
+.entry h2 a:hover {color:var(--link)}
+.method {font-size:.83rem;font-weight:650;color:var(--link)}
+.project-link {display:inline-flex;gap:12px;margin-top:19px;min-height:30px;align-items:center;font-weight:650}
+img,video {display:block;width:100%;height:auto}
+.entry figure a {display:block;background:var(--field)}
+.entry-ppo img {aspect-ratio:1.83;object-fit:cover}
+.entry-mpc img {aspect-ratio:1.78;object-fit:contain}
+figcaption {margin-top:9px;color:var(--secondary);font-size:.84rem;line-height:1.6}
+.about {display:grid;grid-template-columns:1fr 1fr;gap:24px;border-top:1px solid var(--rule);padding:40px 0 52px}
+.about h2 {font-size:clamp(1.6rem,3vw,2.5rem)}
+.about nav {margin-top:10px}
+footer.mast {border-bottom:0;border-top:1px solid var(--rule);color:var(--secondary)}
+.back,.skip {font-size:.9rem}
+.back {display:inline-block;margin:30px 0}
+.skip {position:absolute;top:-200px;left:12px;background:white;padding:10px}
+.skip:focus {top:8px}
+.study {padding-bottom:48px}
+.study header {max-width:59rem;margin-bottom:26px}
+.study h1 {font-size:clamp(2.4rem,5.6vw,4.9rem);text-wrap:initial;margin:8px 0 18px}
+.study header p:not(.method) {max-width:43rem}
+.study header a {display:inline-block;margin-top:12px}
+.chapter,.related {padding:14px 0;border-block:1px solid var(--rule);font-weight:650}
+.study > h2,.study > p {width:min(100%,700px);margin-inline:auto}
+.study > h2 {font-size:clamp(1.55rem,2.8vw,2.25rem);margin-top:52px;margin-bottom:12px}
+.study > figure,.pair {width:min(100%,1060px);margin:22px auto 0}
+.study figure + p,.study .pair + p {margin-top:20px}
+.study figure a {display:block;border:1px solid var(--rule)}
+.study figure img {object-fit:contain;max-height:570px}
+.pair {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
+.pair figure img {aspect-ratio:1.65}
+video {aspect-ratio:16/9;object-fit:contain;background:#1e242a}
+.downloads {display:flex;gap:16px;flex-wrap:wrap;padding-top:12px}
+.related {border-bottom:0;margin-bottom:30px}
+dialog {width:min(1120px,calc(100% - 24px));max-height:94dvh;padding:16px;border:1px solid var(--rule)}
+dialog::backdrop {background:#16202bdb}
+dialog form {display:flex;justify-content:end;margin-bottom:10px}
+dialog button {font:inherit;padding:8px 14px;background:var(--paper);color:var(--ink);border:1px solid var(--rule);cursor:pointer}
+dialog img {object-fit:contain;max-height:74dvh}
+dialog p {font-size:.9rem;margin-top:8px}
+@media(max-width:900px) {.shell{width:calc(100% - 64px)}.entry{gap:26px}.intro{padding-top:52px}}
+@media(max-width:650px) {
+  .shell{width:calc(100% - 36px)}
+  .mast{min-height:59px;font-size:.81rem}
+  .intro{padding:39px 0 26px}
+  .intro h1{font-size:clamp(1.9rem,8.3vw,2.75rem);line-height:1.12}
+  .intro p{margin-top:15px}
+  .entry,.entry-lex,.about,.pair{grid-template-columns:1fr;gap:16px}
+  .entry{padding:24px 0}
+  .entry-lex figure,.entry-lex .entry-copy{grid-column:auto;grid-row:auto}
+  .entry h2{margin:5px 0 8px}
+  .project-link{margin-top:8px}
+  .study h1{font-size:clamp(2rem,8.3vw,2.9rem)}
+  .study > h2{margin-top:36px}
+  footer.mast{flex-wrap:wrap;padding:13px 0}
+}
+.intro h1 span {white-space:nowrap}
+.entry-lex img {aspect-ratio:760/412}
+@media(max-width:650px) {.intro h1 span{display:inline-block}}
+
+.project-nav {gap:8px 22px}
+.project-nav div {display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 9px}
+.project-nav div a:first-child {font-weight:650}
+.project-nav div a:last-child {color:var(--link);font-size:.8rem}
+.entry-lex img {aspect-ratio:1.6;object-fit:contain;background:white}
+.notes {width:min(100%,700px);margin:12px auto 20px;padding-inline-start:1.3em;color:var(--secondary);font-size:1.02rem;line-height:1.7}
+.notes li + li {margin-top:.35em}
+.study .pair figure img {aspect-ratio:auto;max-height:480px}
+.study > figure + .pair {margin-top:24px}
+@media(max-width:820px) {
+  header.mast {display:grid;justify-content:start;padding:13px 0}
+}
+
+/* Align project narration and evidence on one reading edge. */
+.study {max-width:1060px;margin-inline:auto}
+.study h1 {font-size:clamp(2rem,4.8vw,4rem);letter-spacing:-.025em}
+.study > h2,.study > p,.study .notes {margin-inline:0}
+.study > h2 {margin-top:42px}
+.study header {margin-bottom:20px}
+.study .pair {align-items:start}
+.talk-track {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin:0 0 24px;padding:18px 0;border-top:1px solid var(--rule)}
+.talk-track dt {font-size:.85rem;color:var(--link);font-weight:700;margin-bottom:5px}
+.talk-track dd {margin:0;color:var(--secondary);line-height:1.6}
+.study .replay {max-width:820px;margin-left:0}
+.replay video {aspect-ratio:auto;max-height:65vh}
+.study .ablation {max-width:760px;margin-left:0}
+.ablation-legend,.bar-chart {list-style:none;padding:0}
+.ablation-legend {display:flex;gap:16px;font-size:.85rem}
+.ablation-legend li::before {content:"";display:inline-block;width:10px;height:10px;margin-right:5px;background:#285e82}
+.ablation-legend li:nth-child(2)::before,.bar-track i:nth-child(2) {background:#b95a3d}
+.ablation-legend li:nth-child(3)::before,.bar-track i:nth-child(3) {background:#858f9a}
+.bar-chart li {display:grid;grid-template-columns:8rem minmax(0,1fr) 3.1rem;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--rule);font-size:.88rem}
+.bar-chart strong {text-align:right;font-variant-numeric:tabular-nums}
+.bar-track {display:flex;height:14px}
+.bar-track i {background:#285e82}
+.visually-hidden {position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.study .experiment-note {font-size:.88rem}
+@media(max-width:650px) {
+  .talk-track {grid-template-columns:1fr;gap:12px}
+  .study > h2 {margin-top:32px}
+  .bar-chart li {grid-template-columns:6.2rem minmax(0,1fr) 2.6rem;gap:8px;font-size:.8rem}
+}
+.back,.related {width:min(100%,1060px);margin-inline:auto}
+.back {display:block}
+
+/* Give paired figures matching image areas and caption baselines. */
+.study .pair figure[data-figure] > a {
+  display:grid;
+  place-items:center;
+  aspect-ratio:4/3;
+  padding:clamp(5px,1vw,12px);
+}
+.study .pair figure[data-figure] img {
+  width:100%;
+  height:100%;
+  min-height:0;
+  max-height:none;
+  object-fit:contain;
+}
+#mpc .pair figure[data-figure] > a {aspect-ratio:16/10}
+#lex .replay {max-width:520px}
+#lex .replay video {aspect-ratio:742/762;background:white}
+.study .pair figure[data-figure] > a {position:relative}
+.study .pair figure[data-figure] img {
+  position:absolute;
+  inset:0;
+  padding:clamp(5px,1vw,12px);
+}

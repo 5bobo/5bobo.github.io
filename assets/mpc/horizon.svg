@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 246" role="img" aria-labelledby="title">
+<title id="title">Receding-horizon planning schematic</title>
+<rect width="780" height="246" fill="#f4f6f3"/>
+<g font-family="system-ui,sans-serif" fill="#18232b">
+<text x="30" y="43" font-size="20" font-weight="650">Receding-horizon control</text>
+<text x="30" y="108" font-size="16">Solve at k</text><text x="30" y="168" font-size="16">Re-solve at k + 1</text>
+<text x="199" y="214" font-size="14">k</text><text x="296" y="214" font-size="14">k + 1</text><text x="401" y="214" font-size="14">k + 2</text><text x="674" y="214" font-size="14">time →</text>
+<text x="216" y="82" font-size="13" fill="#215c68">Execute first input</text><text x="438" y="82" font-size="13">Remaining predicted inputs</text>
+</g>
+<path d="M204 102h102m0 60h104" stroke="#215c68" stroke-width="8"/>
+<path d="M306 102h320m-216 60h320" stroke="#698781" stroke-width="4" stroke-dasharray="9 6"/>
+<path d="M306 112v40" stroke="#215c68" stroke-dasharray="3 4"/>
+<g fill="#215c68"><circle cx="204" cy="102" r="8"/><circle cx="306" cy="162" r="8"/></g>
+</svg>
