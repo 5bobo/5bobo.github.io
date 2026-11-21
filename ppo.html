@@ -1,8 +1,11 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Reinforcement Learning for Autonomous Driving | Research Portfolio</title><link rel="stylesheet" href="style.css?v=2"><script src="site.js?v=2" defer></script></head>
+<title>Reinforcement Learning for Autonomous Driving | Research Portfolio</title><link rel="stylesheet" href="style.css?v=3"><script src="site.js?v=3" defer></script></head>
 <body><a class="skip" href="#main">跳到正文</a>
-<header class="shell mast"><a class="brand" href="index.html">Research Portfolio</a><nav class="project-nav" aria-label="项目与源码"><div><a href="ppo.html">PPO 自动驾驶</a><a href="https://github.com/5bobo/CASE" aria-label="PPO 自动驾驶 GitHub">GitHub ↗</a></div><div><a href="lex.html">字典序规划</a><a href="https://github.com/5bobo/Lexicographic" aria-label="字典序规划 GitHub">GitHub ↗</a></div><div><a href="mpc.html">MPC 协同搬运</a><a href="https://github.com/5bobo/MPC" aria-label="MPC 协同搬运 GitHub">GitHub ↗</a></div></nav></header><main class="shell" id="main"><a class="back" href="index.html#research">← 研究项目</a><article class="study" id="ppo">
+<header class="shell mast"><a class="brand" href="index.html">Research Portfolio</a><nav class="project-nav" aria-label="项目与源码">
+<div><a href="ppo.html">PPO 自动驾驶</a><a href="https://github.com/5bobo/CASE">GitHub ↗</a></div>
+<div><a href="robotics.html">多机器人规划</a><a href="robotics.html#repositories">GitHub ↗</a></div>
+<div><a href="detection.html">景区目标检测</a><a href="https://github.com/5bobo/Scenic-danger-zone-recognition">GitHub ↗</a></div></nav></header><main class="shell" id="main"><a class="back" href="index.html#research">← 研究项目</a><article class="study" id="ppo">
 <header><p class="method">PPO / CARLA</p><h1>无信号路口通行决策</h1><p>在 CARLA 中训练 PPO，通过车辆运动历史和语义 BEV 决定目标车速。</p></header><dl class="talk-track"><div><dt>研究问题</dt><dd>什么时候等待，什么时候通过？</dd></div><div><dt>我的做法</dt><dd>用历史运动和道路空间信息评估交互。</dd></div><div><dt>实验观察</dt><dd>5 个训练种子平均成功率为 96.8%。</dd></div></dl><nav class="chapter" aria-label="项目目录"><a href="#demos">演示</a><a href="#method">方法</a><a href="#ppo-results">结果</a><a href="#ablation">消融</a></nav>
 <h2 id="demos">闭环通行演示</h2>
 <p>对照两段回放，观察同一策略如何根据来车时机调整目标速度。</p>
@@ -20,7 +23,7 @@
 <h3>训练与验证曲线</h3>
 <figure data-zoom-image="case/ablation-learning-curves.png"><a href="assets/case/ablation-learning-curves.png" aria-label="放大查看：六种配置的训练回报与验证曲线 · 训练种子均为 42。验证耗时按各检查点各自成功的场景统计。"><img src="assets/case/ablation-learning-curves.png" width="2854" height="1948" alt="六种配置的训练回报与验证曲线 · 训练种子均为 42。验证耗时按各检查点各自成功的场景统计。" loading="lazy" decoding="async"></a><figcaption>六种配置的训练回报与验证曲线 · 训练种子均为 42。验证耗时按各检查点各自成功的场景统计。</figcaption></figure>
 <h2>失败案例</h2><figure data-zoom-image="case/failure-analysis.png"><a href="assets/case/failure-analysis.png" aria-label="放大查看：完整模型碰撞于 8.95 s，单帧配置于 25 s 超时。评估范围限于该仿真路口与固定自车路线。"><img src="assets/case/failure-analysis.png" width="1800" height="1013" alt="完整模型碰撞于 8.95 s，单帧配置于 25 s 超时。评估范围限于该仿真路口与固定自车路线。" loading="lazy" decoding="async"></a><figcaption>完整模型碰撞于 8.95 s，单帧配置于 25 s 超时。评估范围限于该仿真路口与固定自车路线。</figcaption></figure>
-</article><nav class="related" aria-label="其他研究"><a href="lex.html">字典序规划</a><a href="mpc.html">MPC 协同搬运</a></nav></main>
+</article><nav class="related" aria-label="其他研究"><a href="robotics.html">多机器人协同规划</a><a href="detection.html">景区目标检测</a></nav></main>
 <footer class="shell mast"><span>Robotics &amp; Autonomous Systems</span><a href="#main">返回顶部 ↑</a></footer>
 <dialog aria-label="科研图放大查看"><form method="dialog"><button>关闭图像 ×</button></form><img alt=""><p></p></dialog>
 </body></html>

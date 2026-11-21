@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>景区危险目标与行为检测 | Research Portfolio</title><link rel="stylesheet" href="style.css?v=3"><script src="site.js?v=3" defer></script></head>
+<body><a class="skip" href="#main">跳到正文</a>
+<header class="shell mast"><a class="brand" href="index.html">Research Portfolio</a><nav class="project-nav" aria-label="项目与源码">
+<div><a href="ppo.html">PPO 自动驾驶</a><a href="https://github.com/5bobo/CASE">GitHub ↗</a></div>
+<div><a href="robotics.html">多机器人规划</a><a href="robotics.html#repositories">GitHub ↗</a></div>
+<div><a href="detection.html">景区目标检测</a><a href="https://github.com/5bobo/Scenic-danger-zone-recognition">GitHub ↗</a></div></nav></header><main class="shell" id="main"><a class="back" href="index.html#research">← 研究项目</a><article class="study" id="detection">
+<header><p class="method">YOLOv5 / EIoU / Video detection</p><h1>景区危险目标与行为检测</h1>
+<p>基于 YOLOv5 v6.0 改造四类目标检测，在景区视频中定位明火、站立行人、跌倒与吸烟目标。</p></header>
+<dl class="talk-track"><div><dt>研究问题</dt><dd>怎样从景区监控画面中定位危险行为与安全隐患？</dd></div><div><dt>我的做法</dt><dd>调整边框回归损失，比较注意力和特征融合配置，并整理视频推理流程。</dd></div><div><dt>实验观察</dt><dd>22 组归档实验中，最高 mAP@0.5 为 0.896。</dd></div></dl>
+<nav class="chapter" aria-label="项目目录"><a href="#demos">检测演示</a><a href="#method">实现与改进</a><a href="#detection-results">实验结果</a></nav>
+<h2 id="demos">视频中的检测效果</h2><p>观察目标框、类别和置信度随画面更新。青色 Region 框用于辅助展示危险区域。</p>
+<div class="pair"><figure><video controls playsinline preload="none" poster="assets/detection/skyline.jpg" src="assets/detection/skyline.mp4" aria-label="滑雪场 · 行人与危险区域展示"></video><figcaption>滑雪场 · 行人与危险区域展示</figcaption></figure><figure><video controls playsinline preload="none" poster="assets/detection/fall.jpg" src="assets/detection/fall.mp4" aria-label="滑雪场 · 跌倒识别"></video><figcaption>滑雪场 · 跌倒识别</figcaption></figure></div>
+<div class="pair"><figure><video controls playsinline preload="none" poster="assets/detection/fire.jpg" src="assets/detection/fire.mp4" aria-label="明火目标检测"></video><figcaption>明火目标检测</figcaption></figure><figure data-zoom-image="detection/smoking.jpg"><a href="assets/detection/smoking.jpg" aria-label="放大查看：吸烟与行人检测 · 历史推理结果"><img src="assets/detection/smoking.jpg" width="750" height="563" alt="吸烟与行人检测 · 历史推理结果" decoding="async"></a><figcaption>吸烟与行人检测 · 历史推理结果</figcaption></figure></div>
+<h2 id="method">实现与改进</h2>
+<ul class="notes"><li><strong>四类输出。</strong> fire、stand、fall、cigarette，定位目标框并输出类别与置信度。</li>
+<li><strong>边框回归。</strong> 当前损失实现启用 EIoU，实验归档覆盖不同回归损失配置。</li>
+<li><strong>特征表达。</strong> 实现 SE、ECA、CA、CBAM、SimAM 与 BiFPN 配置，分别开展实验比较。</li>
+<li><strong>推理后处理。</strong> 对相交的 cigarette 与 stand 检测框做关联与合并，支持图像、视频和摄像头输入。</li></ul>
+<figure data-zoom-image="detection/validation.jpg"><a href="assets/detection/validation.jpg" aria-label="放大查看：验证集预测拼图 · yolov5l + EIoU 实验输出"><img src="assets/detection/validation.jpg" width="1920" height="1100" alt="验证集预测拼图 · yolov5l + EIoU 实验输出" decoding="async"></a><figcaption>验证集预测拼图 · yolov5l + EIoU 实验输出</figcaption></figure>
+<h2 id="detection-results">实验结果</h2><p>各组取 fitness 最高的一轮作为代表，fitness = 0.1 × mAP@0.5 + 0.9 × mAP@0.5:0.95。</p>
+<div class="table-scroll"><table><caption>归档实验的代表结果</caption><thead><tr><th scope="col">配置</th><th scope="col">训练轮数</th><th scope="col">mAP@0.5</th><th scope="col">mAP@0.5:0.95</th></tr></thead><tbody>
+<tr><th scope="row">YOLOv5s 基线</th><td>100</td><td>0.8648</td><td>0.4721</td></tr>
+<tr><th scope="row">YOLOv5l 基线</th><td>100</td><td>0.8811</td><td>0.4973</td></tr>
+<tr><th scope="row">YOLOv5l + EIoU · scratchhigh</th><td>60</td><td>0.8960</td><td>0.5246</td></tr>
+<tr><th scope="row">YOLOv5l + EIoU + BiFPN · scratchhigh</th><td>60</td><td>0.8932</td><td>0.5226</td></tr></tbody></table></div>
+<ul class="notes"><li>最优归档组合相对 YOLOv5l 基线，mAP@0.5 高约 1.5 个百分点。</li><li>实验训练轮数和配置存在差异，性能变化需结合各组条件理解。</li></ul>
+<div class="pair"><figure data-zoom-image="detection/pr.png"><a href="assets/detection/pr.png" aria-label="放大查看：YOLOv5l + EIoU · 各类别 Precision–Recall 曲线"><img src="assets/detection/pr.png" width="2250" height="1500" alt="YOLOv5l + EIoU · 各类别 Precision–Recall 曲线" decoding="async"></a><figcaption>YOLOv5l + EIoU · 各类别 Precision–Recall 曲线</figcaption></figure><figure data-zoom-image="detection/confusion.png"><a href="assets/detection/confusion.png" aria-label="放大查看：同组实验的混淆矩阵 · 查看类别间误判和漏检"><img src="assets/detection/confusion.png" width="3000" height="2250" alt="同组实验的混淆矩阵 · 查看类别间误判和漏检" decoding="async"></a><figcaption>同组实验的混淆矩阵 · 查看类别间误判和漏检</figcaption></figure></div>
+<figure data-zoom-image="detection/training.png"><a href="assets/detection/training.png" aria-label="放大查看：YOLOv5l + EIoU · 60 轮训练的损失与评估曲线"><img src="assets/detection/training.png" width="2400" height="1200" alt="YOLOv5l + EIoU · 60 轮训练的损失与评估曲线" decoding="async"></a><figcaption>YOLOv5l + EIoU · 60 轮训练的损失与评估曲线</figcaption></figure>
+<p>演示片段来自项目归档推理输出，具体视频使用的权重与上表实验尚缺少完整的一一对应记录。</p>
+</article><nav class="related" aria-label="其他研究"><a href="robotics.html">多机器人协同规划</a><a href="ppo.html">PPO 自动驾驶</a></nav></main>
+<footer class="shell mast"><span>Robotics &amp; Autonomous Systems</span><a href="#main">返回顶部 ↑</a></footer>
+<dialog aria-label="科研图放大查看"><form method="dialog"><button>关闭图像 ×</button></form><img alt=""><p></p></dialog>
+</body></html>
