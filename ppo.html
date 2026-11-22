@@ -1,13 +1,13 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Reinforcement Learning for Autonomous Driving | Research Portfolio</title><link rel="stylesheet" href="style.css?v=5"><script src="site.js?v=5" defer></script></head>
+<title>Reinforcement Learning for Autonomous Driving | Research Portfolio</title><link rel="stylesheet" href="style.css?v=7"><script src="site.js?v=7" defer></script></head>
 <body><a class="skip" href="#main">跳到正文</a>
 <header class="shell mast"><a class="brand" href="index.html">Research Portfolio</a><nav class="project-nav" aria-label="项目与源码">
 <div><a href="ppo.html">PPO 自动驾驶</a><a href="https://github.com/5bobo/CASE">GitHub ↗</a></div>
 <div><a href="av2.html">AV2 运动预测</a><a href="https://github.com/5bobo/World-Model-AV2">GitHub ↗</a></div>
 <div><a href="robotics.html">字典序与 MPC</a><a href="robotics.html#repositories">GitHub ↗</a></div>
 <div><a href="detection.html">景区目标检测</a><a href="https://github.com/5bobo/Scenic-danger-zone-recognition">GitHub ↗</a></div></nav></header><main class="shell" id="main"><a class="back" href="index.html#research">← 研究项目</a><article class="study" id="ppo">
-<header><p class="method">PPO / CARLA</p><h1>无信号路口通行决策</h1><p>在 CARLA 中训练 PPO，通过车辆运动历史和语义 BEV 决定目标车速。</p></header><dl class="talk-track"><div><dt>研究问题</dt><dd>什么时候等待，什么时候通过？</dd></div><div><dt>我的做法</dt><dd>用历史运动和道路空间信息评估交互。</dd></div><div><dt>实验观察</dt><dd>5 个训练种子平均成功率为 96.8%。</dd></div></dl><nav class="chapter" aria-label="项目目录"><a href="#demos">演示</a><a href="#method">方法</a><a href="#ppo-results">结果</a><a href="#ablation">消融</a></nav>
+<header><p class="method">PPO / CARLA</p><h1>无信号路口通行决策</h1><p>在 CARLA 中训练 PPO，通过车辆运动历史和语义 BEV 决定目标车速。</p></header><dl class="talk-track"><div><dt>研究问题</dt><dd>什么时候等待，什么时候通过？</dd></div><div><dt>我的做法</dt><dd>融合 LSTM 运动历史、CNN 语义 BEV 与交叉注意力，学习交互式速度决策。</dd></div><div><dt>实验效果</dt><dd>5 个训练种子平均成功率为 96.8%。</dd></div></dl><nav class="chapter" aria-label="项目目录"><a href="#demos">演示</a><a href="#method">方法</a><a href="#ppo-results">结果</a><a href="#ablation">消融</a></nav>
 <h2 id="demos">闭环通行演示</h2>
 <p>对照两段回放，观察同一策略如何根据来车时机调整目标速度。</p>
 <div class="pair">
@@ -15,7 +15,7 @@
 <figure><video controls playsinline preload="none" poster="assets/case/yield.webp" aria-label="低速等待后通过" src="assets/case/yield-then-cross.mp4"></video><figcaption>低速等待后通过 · 13.40 s</figcaption></figure>
 </div>
 <h2 id="method">决策架构</h2><ul class="notes"><li>输入：10 帧车辆运动历史与当前五通道语义 BEV。</li><li>融合：LSTM 编码历史，CNN 编码 BEV，带掩码的交叉注意力聚合有效周车。</li><li>执行：PPO 输出 0–15 m/s 目标速度，PID 跟踪路线和车速。</li></ul>
-<figure data-zoom-image="case/architecture.png"><a href="assets/case/architecture.png" aria-label="放大查看：项目原有架构图 · 观测、编码、融合与速度执行。"><img src="assets/case/architecture.png" width="1800" height="1013" alt="项目原有架构图 · 观测、编码、融合与速度执行。" loading="lazy" decoding="async"></a><figcaption>项目原有架构图 · 观测、编码、融合与速度执行。</figcaption></figure>
+<figure data-zoom-image="case/architecture.png"><a href="assets/case/architecture.png" aria-label="放大查看：决策架构 · 观测、编码、融合与速度执行。"><img src="assets/case/architecture.png" width="1800" height="1013" alt="决策架构 · 观测、编码、融合与速度执行。" loading="lazy" decoding="async"></a><figcaption>决策架构 · 观测、编码、融合与速度执行。</figcaption></figure>
 <h2 id="ppo-results">多种子评估</h2><ul class="notes"><li><strong>96.8% 平均成功率</strong> · 5 个训练种子，统一取第 1900 轮。</li><li>CARLA Town03 · 各模型复用同一组 50 个测试场景。</li><li>耗时比较使用五个模型共同成功的 43 个场景。</li></ul>
 <figure data-zoom-image="case/multiseed-results.png"><a href="assets/case/multiseed-results.png" aria-label="放大查看：五种子训练曲线、测试结局与共同成功场景耗时。"><img src="assets/case/multiseed-results.png" width="1800" height="1013" alt="五种子训练曲线、测试结局与共同成功场景耗时。" loading="lazy" decoding="async"></a><figcaption>五种子训练曲线、测试结局与共同成功场景耗时。</figcaption></figure>
 <h2 id="ablation">消融实验</h2>
@@ -23,7 +23,7 @@
 <figure data-zoom-image="case/ablation-evaluation.png"><a href="assets/case/ablation-evaluation.png" aria-label="放大查看：固定测试集的结局分布，以及六种配置均成功的 28 个场景上的耗时、纵向 jerk 和目标速度变化。"><img src="assets/case/ablation-evaluation.png" width="2929" height="2018" alt="固定测试集的结局分布，以及六种配置均成功的 28 个场景上的耗时、纵向 jerk 和目标速度变化。" loading="lazy" decoding="async"></a><figcaption>固定测试集的结局分布，以及六种配置均成功的 28 个场景上的耗时、纵向 jerk 和目标速度变化。</figcaption></figure>
 <h3>训练与验证曲线</h3>
 <figure data-zoom-image="case/ablation-learning-curves.png"><a href="assets/case/ablation-learning-curves.png" aria-label="放大查看：六种配置的训练回报与验证曲线 · 训练种子均为 42。验证耗时按各检查点各自成功的场景统计。"><img src="assets/case/ablation-learning-curves.png" width="2854" height="1948" alt="六种配置的训练回报与验证曲线 · 训练种子均为 42。验证耗时按各检查点各自成功的场景统计。" loading="lazy" decoding="async"></a><figcaption>六种配置的训练回报与验证曲线 · 训练种子均为 42。验证耗时按各检查点各自成功的场景统计。</figcaption></figure>
-<h2>失败案例</h2><figure data-zoom-image="case/failure-analysis.png"><a href="assets/case/failure-analysis.png" aria-label="放大查看：完整模型碰撞于 8.95 s，单帧配置于 25 s 超时。评估范围限于该仿真路口与固定自车路线。"><img src="assets/case/failure-analysis.png" width="1800" height="1013" alt="完整模型碰撞于 8.95 s，单帧配置于 25 s 超时。评估范围限于该仿真路口与固定自车路线。" loading="lazy" decoding="async"></a><figcaption>完整模型碰撞于 8.95 s，单帧配置于 25 s 超时。评估范围限于该仿真路口与固定自车路线。</figcaption></figure>
+<h2>碰撞与超时案例分析</h2><figure data-zoom-image="case/failure-analysis.png"><a href="assets/case/failure-analysis.png" aria-label="放大查看：Town03 交互案例分析 · 对照完整模型 8.95 s 的碰撞片段与单帧配置 25 s 的超时片段，分析速度决策与来车时机。"><img src="assets/case/failure-analysis.png" width="1800" height="1013" alt="Town03 交互案例分析 · 对照完整模型 8.95 s 的碰撞片段与单帧配置 25 s 的超时片段，分析速度决策与来车时机。" loading="lazy" decoding="async"></a><figcaption>Town03 交互案例分析 · 对照完整模型 8.95 s 的碰撞片段与单帧配置 25 s 的超时片段，分析速度决策与来车时机。</figcaption></figure>
 </article><nav class="related" aria-label="其他研究"><a href="robotics.html">多机器人协同规划</a><a href="detection.html">景区目标检测</a></nav></main>
 <footer class="shell mast"><span>Robotics &amp; Autonomous Systems</span><a href="#main">返回顶部 ↑</a></footer>
 <dialog aria-label="科研图放大查看"><form method="dialog"><button>关闭图像 ×</button></form><img alt=""><p></p></dialog>
