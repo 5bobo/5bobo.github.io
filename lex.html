@@ -1,10 +1,11 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lexicographic Optimization for Multi-Robot Planning | Research Portfolio</title><link rel="stylesheet" href="style.css?v=3"><script src="site.js?v=3" defer></script></head>
+<title>Lexicographic Optimization for Multi-Robot Planning | Research Portfolio</title><link rel="stylesheet" href="style.css?v=5"><script src="site.js?v=5" defer></script></head>
 <body><a class="skip" href="#main">跳到正文</a>
 <header class="shell mast"><a class="brand" href="index.html">Research Portfolio</a><nav class="project-nav" aria-label="项目与源码">
 <div><a href="ppo.html">PPO 自动驾驶</a><a href="https://github.com/5bobo/CASE">GitHub ↗</a></div>
-<div><a href="robotics.html">多机器人规划</a><a href="robotics.html#repositories">GitHub ↗</a></div>
+<div><a href="av2.html">AV2 运动预测</a><a href="https://github.com/5bobo/World-Model-AV2">GitHub ↗</a></div>
+<div><a href="robotics.html">字典序与 MPC</a><a href="robotics.html#repositories">GitHub ↗</a></div>
 <div><a href="detection.html">景区目标检测</a><a href="https://github.com/5bobo/Scenic-danger-zone-recognition">GitHub ↗</a></div></nav></header><main class="shell" id="main"><a class="back" href="index.html#research">← 研究项目</a><article class="study" id="lex">
 <header><p class="method">Lexicographic MPC / CasADi</p><h1>字典序多机器人规划</h1><p>用两层优化协调编队保持和目标导航。</p></header><dl class="talk-track"><div><dt>研究问题</dt><dd>导航和编队目标发生冲突时，如何保护编队？</dd></div><div><dt>我的做法</dt><dd>先求编队，再用其代价上界约束导航。</dd></div><div><dt>实验观察</dt><dd>四机器人仿真展示了发现新障碍后的重规划。</dd></div></dl><nav class="chapter" aria-label="项目目录"><a href="#demos">过程对照</a><a href="#method">方法</a><a href="#lex-results">结果</a></nav>
 <h2 id="demos">编队行进与障碍重规划</h2>

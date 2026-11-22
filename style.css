@@ -34,7 +34,7 @@ h1,h2 {font-weight:650;line-height:1.08;letter-spacing:-.039em;text-wrap:balance
 }
 .intro-line {display:block}
 .intro-line > span {white-space:nowrap}
-.intro p {margin:16px auto 0;max-width:34rem;text-wrap:balance}
+.intro p {margin:16px auto 0;text-wrap:wrap}
 .entry {
   display:grid;
   grid-template-columns:minmax(0,4fr) minmax(0,7fr);
@@ -61,12 +61,12 @@ footer.mast {border-bottom:0;border-top:1px solid var(--rule);color:var(--second
 .skip {position:absolute;top:-200px;left:12px;background:white;padding:10px}
 .skip:focus {top:8px}
 .study {padding-bottom:48px}
-.study header {max-width:59rem;margin-bottom:26px}
+.study header {margin-bottom:26px}
 .study h1 {font-size:clamp(2.4rem,5.6vw,4.9rem);text-wrap:initial;margin:8px 0 18px}
-.study header p:not(.method) {max-width:43rem}
+.study header p:not(.method) {max-width:none}
 .study header a {display:inline-block;margin-top:12px}
 .chapter,.related {padding:14px 0;border-block:1px solid var(--rule);font-weight:650}
-.study > h2,.study > p {width:min(100%,700px);margin-inline:auto}
+.study > h2,.study > p {width:100%;margin-inline:auto}
 .study > h2 {font-size:clamp(1.55rem,2.8vw,2.25rem);margin-top:52px;margin-bottom:12px}
 .study > figure,.pair {width:min(100%,1060px);margin:22px auto 0}
 .study figure + p,.study .pair + p {margin-top:20px}
@@ -101,7 +101,7 @@ dialog p {font-size:.9rem;margin-top:8px}
 .project-nav div {display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 9px}
 .project-nav div a:first-child {font-weight:650}
 .project-nav div a:last-child {color:var(--link);font-size:.8rem}
-.notes {width:min(100%,700px);margin:12px auto 20px;padding-inline-start:1.3em;color:var(--secondary);font-size:1.02rem;line-height:1.7}
+.notes {width:100%;margin:12px auto 20px;padding-inline-start:1.3em;color:var(--secondary);font-size:1.02rem;line-height:1.7}
 .notes li + li {margin-top:.35em}
 .study .pair figure img {aspect-ratio:auto;max-height:480px}
 .study > figure + .pair {margin-top:24px}
@@ -192,3 +192,36 @@ td {font-variant-numeric:tabular-nums}
 #detection .pair:has(video) > figure {display:flex;flex-direction:column}
 #detection .pair:has(video) video {aspect-ratio:16/9}
 #detection .pair:has(video) figure[data-zoom-image] > a {aspect-ratio:16/9}
+
+.project-nav {gap:8px 18px}
+#av2 > figure:has(video) {max-width:1060px}
+#av2 > figure[data-zoom-image="av2/framework.png"] img {max-height:none}
+@media(max-width:1100px) {header.mast {display:grid;justify-content:start;padding:13px 0}}
+
+/* Keep the AV2 narrative and its evidence on a consistent left edge. */
+#av2 > h2,
+#av2 > h3,
+#av2 > p,
+#av2 > figure,
+#av2 > .notes,
+#av2 > .table-scroll {
+  width:100%;
+  max-width:960px;
+  margin-inline:0;
+}
+#av2 > h2 {margin-top:48px}
+#av2 > h3 {font-size:clamp(1.15rem,2vw,1.45rem);margin-top:32px}
+#av2 > figure img {height:auto;max-height:none}
+#av2 > .forecast-video {margin-top:16px}
+#av2 .forecast-video video {height:auto;aspect-ratio:16/9;background:#f5f7f7}
+#av2 .media-reading {font-size:.96rem;margin-top:12px}
+#av2 > figure:has(video) {max-width:960px}
+#av2 .table-scroll {margin-top:20px}
+#av2 table {min-width:620px}
+#av2 caption {font-size:.88rem;line-height:1.6}
+#av2 .talk-track {gap:20px}
+@media(max-width:650px) {
+  #av2 > h2 {margin-top:34px}
+  #av2 > h3 {margin-top:26px}
+  #av2 .forecast-video figcaption {font-size:.8rem}
+}

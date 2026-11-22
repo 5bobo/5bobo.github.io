@@ -1,10 +1,11 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>多机器人协同规划 | Research Portfolio</title><link rel="stylesheet" href="style.css?v=3"><script src="site.js?v=3" defer></script></head>
+<title>多机器人协同规划 | Research Portfolio</title><link rel="stylesheet" href="style.css?v=5"><script src="site.js?v=5" defer></script></head>
 <body><a class="skip" href="#main">跳到正文</a>
 <header class="shell mast"><a class="brand" href="index.html">Research Portfolio</a><nav class="project-nav" aria-label="项目与源码">
 <div><a href="ppo.html">PPO 自动驾驶</a><a href="https://github.com/5bobo/CASE">GitHub ↗</a></div>
-<div><a href="robotics.html">多机器人规划</a><a href="robotics.html#repositories">GitHub ↗</a></div>
+<div><a href="av2.html">AV2 运动预测</a><a href="https://github.com/5bobo/World-Model-AV2">GitHub ↗</a></div>
+<div><a href="robotics.html">字典序与 MPC</a><a href="robotics.html#repositories">GitHub ↗</a></div>
 <div><a href="detection.html">景区目标检测</a><a href="https://github.com/5bobo/Scenic-danger-zone-recognition">GitHub ↗</a></div></nav></header><main class="shell" id="main"><a class="back" href="index.html#research">← 研究项目</a>
 <section class="collection-intro"><h1>多机器人协同规划</h1><p>围绕多机器人运动规划的两项工作，分别研究任务优先级与协同搬运。</p>
 <nav class="chapter" aria-label="两项研究"><a href="#lex">字典序优化</a><a href="#mpc">CVT–EMD–MPC</a></nav></section>
@@ -47,7 +48,7 @@
 
 <div class="pair"><figure data-zoom-image="mpc/formation-error.png"><a href="assets/mpc/formation-error.png" aria-label="放大查看：result6 编队误差在阶段切换附近变化，随后逐渐收敛。"><img src="assets/mpc/formation-error.png" width="1800" height="1194" alt="result6 编队误差在阶段切换附近变化，随后逐渐收敛。" loading="lazy" decoding="async"></a><figcaption>result6 编队误差在阶段切换附近变化，随后逐渐收敛。</figcaption></figure><figure data-zoom-image="mpc/velocity-curves.png"><a href="assets/mpc/velocity-curves.png" aria-label="放大查看：result6 · 线速度和角速度随阶段切换变化。"><img src="assets/mpc/velocity-curves.png" width="3600" height="1500" alt="result6 · 线速度和角速度随阶段切换变化。" loading="lazy" decoding="async"></a><figcaption>result6 · 线速度和角速度随阶段切换变化。</figcaption></figure></div>
 <h3>历史版本对照</h3>
-<figure data-zoom-image="mpc/without-orientation-trajectory.png"><a href="assets/mpc/without-orientation-trajectory.png" aria-label="放大查看：历史 result5 去除朝向项的探索记录。两个版本同时存在地图或实现差异。"><img src="assets/mpc/without-orientation-trajectory.png" width="4800" height="2700" alt="历史 result5 去除朝向项的探索记录。两个版本同时存在地图或实现差异。" loading="lazy" decoding="async"></a><figcaption>历史 result5 去除朝向项的探索记录。两个版本同时存在地图或实现差异。</figcaption></figure><ul class="notes"><li>实验范围为集中式二维运动学仿真。</li><li>result5 与 result6 存在地图或实现差异，朝向项结果适合做定性观察。</li></ul>
+<figure data-zoom-image="mpc/without-orientation-trajectory.png"><a href="assets/mpc/without-orientation-trajectory.png" aria-label="放大查看：历史 result5 · 去除朝向项版本的搬运轨迹。"><img src="assets/mpc/without-orientation-trajectory.png" width="4800" height="2700" alt="历史 result5 · 去除朝向项版本的搬运轨迹。" loading="lazy" decoding="async"></a><figcaption>历史 result5 · 去除朝向项版本的搬运轨迹。</figcaption></figure><ul class="notes"><li>实验范围为集中式二维运动学仿真。</li><li>result5 展示去除朝向项的搬运过程，result6 展示后续版本的轨迹、编队误差与控制输入。</li></ul>
 </article><section id="repositories" class="about"><h2>代码仓库</h2><nav><a href="https://github.com/5bobo/Lexicographic">Lexicographic</a><a href="https://github.com/5bobo/MPC">MPC</a></nav></section></main>
 <footer class="shell mast"><span>Robotics &amp; Autonomous Systems</span><a href="#main">返回顶部 ↑</a></footer>
 <dialog aria-label="科研图放大查看"><form method="dialog"><button>关闭图像 ×</button></form><img alt=""><p></p></dialog>
