@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AV2 多智能体运动预测 | Research Portfolio</title><link rel="stylesheet" href="style.css?v=5"><script src="site.js?v=5" defer></script></head>
+<title>AV2 多智能体运动预测 | Research Portfolio</title><link rel="stylesheet" href="style.css?v=6"><script src="site.js?v=6" defer></script></head>
 <body><a class="skip" href="#main">跳到正文</a>
 <header class="shell mast"><a class="brand" href="index.html">Research Portfolio</a><nav class="project-nav" aria-label="项目与源码">
 <div><a href="ppo.html">PPO 自动驾驶</a><a href="https://github.com/5bobo/CASE">GitHub ↗</a></div>
@@ -9,7 +9,7 @@
 <div><a href="detection.html">景区目标检测</a><a href="https://github.com/5bobo/Scenic-danger-zone-recognition">GitHub ↗</a></div></nav></header><main class="shell" id="main"><a class="back" href="index.html#research">← 研究项目</a><article class="study" id="av2">
 <header><p class="method">Argoverse 2 / Joint forecasting / Future refinement</p><h1>AV2 多智能体运动预测</h1><p>从历史轨迹与矢量地图出发，同时预测多个交通参与者未来 6 秒的运动，生成六组联合未来与整场概率。</p></header>
 <dl class="talk-track"><div><dt>研究问题</dt><dd>怎样让多个主体的未来在同一候选中相互协调，并选出更合理的联合预测？</dd></div><div><dt>我的做法</dt><dd>实现联合提案、未来交互细化和独立场景评分，串联训练、预测、评测与动态可视化。</dd></div><div><dt>实验效果</dt><dd>全量细化模型在 22,940 个 holdout 场景上，Best-of-6 FDE 为 1.817 m。</dd></div></dl>
-<nav class="chapter" aria-label="项目目录"><a href="#demos">动态预测</a><a href="#method">方法架构</a><a href="#results">全量结果</a><a href="#engineering">工程实现</a></nav>
+<nav class="chapter" aria-label="项目目录"><a href="#demos">动态预测</a><a href="#method">方法架构</a><a href="#objective">损失设计</a><a href="#results">全量结果</a><a href="#engineering">工程实现</a></nav>
 <h2 id="demos">一段历史，六组联合未来</h2>
 <p>每个面板是一组完整的多主体未来。颜色对应同一目标，面板按场景概率排序，共用时间轴与地图视野。</p>
 <h3>路口分歧 · 候选呈现不同转向</h3>
@@ -27,6 +27,37 @@
 <li><strong>生成六组提案。</strong> 共享循环解码器按 0–2、2–4、4–6 秒分段生成整场轨迹，让同世界目标在提案阶段交换信息。</li>
 <li><strong>细化未来关系。</strong> 在已预测的路径上查询邻近主体与地图，通过时段、主体及地图注意力生成速度残差，再积分修正轨迹。</li>
 <li><strong>对整场未来评分。</strong> 独立评分器重新编码细化轨迹与关系，输出六组候选的归一化概率。</li></ol>
+
+<h2 id="objective">损失函数：让候选更准，让排序更合理</h2>
+<p>轨迹分支把一个联合未来学准确，评分分支学习六组未来的相对概率。两条监督路径分工协作，组成最终训练目标。</p>
+<section class="loss-explainer" aria-label="联合预测损失函数可视化">
+<div class="loss-input"><span class="loss-kicker">共同输入</span><strong>历史与地图 X → 六组联合提案 P₁, …, P₆ → 六组细化轨迹 R₁, …, R₆</strong><p>Y 表示多主体未来真值；每个候选都是整场未来，多个主体共享候选编号 k。</p></div>
+<div class="loss-branches">
+<section class="loss-lane"><header><span class="loss-kicker">轨迹分支 · Geometry</span><h3>先选提案，再沿同一候选细化</h3></header>
+<div class="loss-step"><h4>比较六组初步轨迹</h4><div class="loss-equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" aria-label="J(P,k) = ADE + FDE"><mi>J</mi><mo>(</mo><mi>P</mi><mo>,</mo><mi>k</mi><mo>)</mo><mo>=</mo><mi>ADE</mi><mo>+</mo><mi>FDE</mi></math></div><p>ADE 描述整段路径，FDE 描述未来 6 秒终点，兼顾行进过程与最终位置。</p></div>
+<div class="loss-step"><h4>选定场景级最优提案</h4><div class="loss-equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" aria-label="k star = arg min over k of J(P,k)"><msup><mi>k</mi><mrow><mo>*</mo></mrow></msup><mo>=</mo><munder><mo>arg min</mo><mi>k</mi></munder><mi>J</mi><mo>(</mo><mi>P</mi><mo>,</mo><mi>k</mi><mo>)</mo></math></div><p>按 Proposal 误差选择 k*，该场景的全部目标使用同一个候选编号。</p></div>
+<div class="loss-step"><h4>同时监督提案与细化</h4><div class="loss-equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" aria-label="L geo = J(P,k star) + J(R,k star)"><msub><mi>ℒ</mi><mrow><mtext>geo</mtext></mrow></msub><mo>=</mo><mi>J</mi><mo>(</mo><mi>P</mi><mo>,</mo><msup><mi>k</mi><mrow><mo>*</mo></mrow></msup><mo>)</mo><mo>+</mo><mi>J</mi><mo>(</mo><mi>R</mi><mo>,</mo><msup><mi>k</mi><mrow><mo>*</mo></mrow></msup><mo>)</mo></math></div><p>P 与 R 使用同一个 k*，让初步生成和后续修正沿一致的联合未来学习。</p></div>
+</section>
+<section class="loss-lane"><header><span class="loss-kicker">评分分支 · Scoring</span><h3>保留六组未来，学习整场概率</h3></header>
+<div class="loss-step"><h4>把六个分数变成概率</h4><div class="loss-equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" aria-label="pi = softmax(z)"><mi>π</mi><mo>=</mo><mtext>softmax</mtext><mo>(</mo><mi>z</mi><mo>)</mo></math></div><p>评分器读取停止梯度的细化轨迹与上下文，输出场景级 logits z。</p></div>
+<div class="loss-step"><h4>衡量每个世界对真值的拟合</h4><div class="loss-equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" aria-label="E k = negative log p(Y given R k)"><msub><mi>E</mi><mrow><mi>k</mi></mrow></msub><mo>=</mo><mo>−</mo><mi>log</mi><mi>p</mi><mo>(</mo><mi>Y</mi><mo>|</mo><msub><mi>R</mi><mrow><mi>k</mi></mrow></msub><mo>)</mo></math></div><p>用未来 2、4、6 秒的有效路点计算 Laplace 负对数似然，尺度 b = 2 m。</p></div>
+<div class="loss-step"><h4>对六个世界求混合似然</h4><div class="loss-equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" aria-label="L score = negative log sum over k of pi k times exp negative E k"><msub><mi>ℒ</mi><mrow><mtext>score</mtext></mrow></msub><mo>=</mo><mo>−</mo><mi>log</mi><mrow><munder><mo>∑</mo><mi>k</mi></munder><msub><mi>π</mi><mrow><mi>k</mi></mrow></msub><msup><mi>e</mi><mrow><mo>−</mo><msub><mi>E</mi><mrow><mi>k</mi></mrow></msub></mrow></msup></mrow></math></div><p>把候选概率与真值拟合程度共同纳入目标，评分损失只更新评分分支。</p></div>
+</section>
+</div>
+<div class="loss-total"><div><span class="loss-kicker">联合训练目标</span><p>几何误差与评分 NLL 等权相加，再按有监督场景取平均。</p></div><div class="loss-equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" aria-label="L total = L geo + L score"><msub><mi>ℒ</mi><mrow><mtext>total</mtext></mrow></msub><mo>=</mo><msub><mi>ℒ</mi><mrow><mtext>geo</mtext></mrow></msub><mo>+</mo><msub><mi>ℒ</mi><mrow><mtext>score</mtext></mrow></msub></math></div></div>
+<section class="loss-responsibility"><header><span class="loss-kicker">理解评分如何学习</span><h3>概率 π 与责任度 r 的差，决定排序怎样调整</h3></header>
+<div class="loss-derivation"><div><div class="loss-equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" aria-label="r k = pi k exp negative E k divided by sum over j pi j exp negative E j"><msub><mi>r</mi><mrow><mi>k</mi></mrow></msub><mo>=</mo><mfrac><mrow><msub><mi>π</mi><mrow><mi>k</mi></mrow></msub><msup><mi>e</mi><mrow><mo>−</mo><msub><mi>E</mi><mrow><mi>k</mi></mrow></msub></mrow></msup></mrow><mrow><munder><mo>∑</mo><mi>j</mi></munder><msub><mi>π</mi><mrow><mi>j</mi></mrow></msub><msup><mi>e</mi><mrow><mo>−</mo><msub><mi>E</mi><mrow><mi>j</mi></mrow></msub></mrow></msup></mrow></mfrac></math></div><p>责任度 r：结合当前概率和真值拟合后，各候选对解释真值的贡献。</p></div><div><div class="loss-equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" aria-label="partial L score over partial z k = pi k minus r k"><mfrac><mrow><mo>∂</mo><msub><mi>ℒ</mi><mrow><mtext>score</mtext></mrow></msub></mrow><mrow><mo>∂</mo><msub><mi>z</mi><mrow><mi>k</mi></mrow></msub></mrow></mfrac><mo>=</mo><msub><mi>π</mi><mrow><mi>k</mi></mrow></msub><mo>−</mo><msub><mi>r</mi><mrow><mi>k</mi></mrow></msub></math></div><p>当 rₖ &gt; πₖ 时，梯度下降提高 zₖ；反之降低，使评分向拟合更好的候选倾斜。</p></div></div>
+<div class="loss-demo"><div class="loss-demo-heading"><h4>同样六个候选，哪一个更贴近真值？</h4><span class="loss-demo-label">教学示意 · 非实验结果</span></div>
+<p>切换真值拟合更好的候选，观察责任度及评分调整方向。π 是更新前概率，r 是结合真值后的责任度。</p>
+<div class="loss-demo-controls" role="group" aria-label="选择教学示意中的最佳拟合候选"><button type="button" data-loss-fit="0" aria-pressed="false">候选 1 更贴近真值</button><button type="button" data-loss-fit="1" aria-pressed="true">候选 2 更贴近真值</button></div>
+<div class="loss-demo-legend"><span><i class="probability-key"></i>当前概率 π</span><span><i class="responsibility-key"></i>责任度 r</span></div>
+<ol class="loss-worlds" aria-label="六候选概率与责任度对照"></ol><p class="loss-demo-status" aria-live="polite"></p>
+</div>
+</section>
+<details class="loss-implementation"><summary>展开公式细节：有效掩码与路点似然</summary>
+<div class="loss-equation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block" aria-label="E k sums valid waypoint coordinates: absolute error divided by 2 plus log 4"><msub><mi>E</mi><mrow><mi>k</mi></mrow></msub><mo>=</mo><munder><mo>∑</mo><mrow><mo>(</mo><mi>i</mi><mo>,</mo><mi>t</mi><mo>,</mo><mi>c</mi><mo>)</mo><mo>∈</mo><mi>Ω</mi></mrow></munder><mo>[</mo><mfrac><mrow><mo>|</mo><msub><mi>Y</mi><mrow><mi>itc</mi></mrow></msub><mo>−</mo><msub><mi>R</mi><mrow><mi>kitc</mi></mrow></msub><mo>|</mo></mrow><mrow><mn>2</mn></mrow></mfrac><mo>+</mo><mi>log</mi><mn>4</mn><mo>]</mo></math></div><ul><li>Ω 是目标有效掩码与未来有效掩码共同确定的路点坐标集合，t ∈ {2, 4, 6} 秒，c ∈ {x, y}；常数 log 4 对应 Laplace 尺度 2 m。</li><li>ADE 先对每个目标的有效帧取平均，再对有效目标取平均；FDE 对未来第 60 帧有效的目标取平均。</li><li>几何分支沿 k* 传播梯度；评分能量使用 R.detach()，评分器输入的轨迹与上下文也停止梯度。</li><li>实现对应 <code>predictors/refinement_loss.py</code> 与 <code>predictors/refinement.py</code>；评分梯度公式按单场景表示。</li></ul>
+</details>
+</section>
 <h2 id="results">全量模型的预测效果</h2>
 <p>Top-1 评估最高概率候选，Best-of-6 按真值终点误差从六组联合未来中选优。两项一起衡量预测精度、候选覆盖和排序。</p>
 <div class="table-scroll"><table><caption>全量细化模型 · 第 80 轮 · val_holdout · 场景等权汇总</caption><thead><tr><th scope="col">评测范围</th><th scope="col">场景数</th><th scope="col">Top-1 ADE / FDE</th><th scope="col">Best-of-6 ADE / FDE</th><th scope="col">Brier-minFDE₆</th></tr></thead><tbody>
