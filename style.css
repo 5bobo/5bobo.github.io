@@ -245,3 +245,8 @@ td {font-variant-numeric:tabular-nums}
   .objective h3 {margin-top:26px}
   .loss-equation {font-size:1.2rem}
 }
+
+.objective-caption .notes {margin:0;padding-inline-start:1.15em;font-size:.94rem;line-height:1.75}
+
+@media(max-width:900px) {.mpc-objective .objective-row {grid-template-columns:1fr;gap:12px}}
+@media(max-width:650px) {.mpc-objective .loss-equation {font-size:1.1rem}}
