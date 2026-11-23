@@ -70,7 +70,7 @@ footer.mast {border-bottom:0;border-top:1px solid var(--rule);color:var(--second
 .study > h2 {font-size:clamp(1.55rem,2.8vw,2.25rem);margin-top:52px;margin-bottom:12px}
 .study > figure,.pair {width:min(100%,1060px);margin:22px auto 0}
 .study figure + p,.study .pair + p {margin-top:20px}
-.study figure a {display:block;border:1px solid var(--rule)}
+.study figure > a {display:block;border:1px solid var(--rule)}
 .study figure img {object-fit:contain;max-height:570px}
 .pair {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px}
 .pair figure img {aspect-ratio:1.65}

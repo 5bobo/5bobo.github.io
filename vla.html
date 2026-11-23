@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>UniDriveVLA 自动驾驶复现 | Research Portfolio</title><link rel="stylesheet" href="style.css?v=9"><script src="site.js?v=9" defer></script></head>
+<title>UniDriveVLA 自动驾驶复现 | Research Portfolio</title><link rel="stylesheet" href="style.css?v=10"><script src="site.js?v=9" defer></script></head>
 <body><a class="skip" href="#main">跳到正文</a>
 <header class="shell mast"><a class="brand" href="index.html">Research Portfolio</a><nav class="project-nav" aria-label="项目与源码">
 <div><a href="ppo.html">PPO 自动驾驶</a><a href="https://github.com/5bobo/CASE">GitHub ↗</a></div>
@@ -27,8 +27,10 @@
 <h3>路口转弯 · 路径随车辆推进</h3>
 <figure><video width="1584" height="432" controls playsinline preload="none" poster="assets/vla/turn.webp" src="assets/vla/turn.mp4" aria-label="我的复现回放 · RouteScenario 2397 · 无信号路口转弯 · 10.8 s"></video><figcaption>我的复现回放 · RouteScenario 2397 · 无信号路口转弯 · 10.8 s</figcaption></figure>
 <h2 id="vla-method">理解、感知与规划的统一模型</h2>
-<figure data-zoom-image="vla/framework.png"><a href="assets/vla/framework.png" aria-label="放大查看：原作者方法框架 · Understanding、Perception、Action 三专家通过 Masked Joint Attention 交换信息。"><img src="assets/vla/framework.png" width="783" height="451" alt="原作者方法框架 · Understanding、Perception、Action 三专家通过 Masked Joint Attention 交换信息。" loading="lazy" decoding="async"></a><figcaption>原作者方法框架 · Understanding、Perception、Action 三专家通过 Masked Joint Attention 交换信息。</figcaption></figure>
 <ul class="notes"><li><strong>理解专家：</strong>以 Qwen3-VL 为基础处理视觉与语言信息，为驾驶任务提供语义特征。</li><li><strong>感知专家：</strong>通过稀疏空间查询表达检测、地图和占用等信息，为规划提供空间先验。</li><li><strong>规划专家：</strong>结合语义与空间特征生成未来自车轨迹，再由控制器执行。</li></ul>
+<figure data-zoom-image="vla/framework.png"><a href="assets/vla/framework.png" aria-label="放大查看：原作者方法框架 · Understanding、Perception、Action 三专家通过 Masked Joint Attention 交换信息。"><img src="assets/vla/framework.png" width="783" height="451" alt="原作者方法框架 · Understanding、Perception、Action 三专家通过 Masked Joint Attention 交换信息。" loading="lazy" decoding="async"></a><figcaption>原作者方法框架 · Understanding、Perception、Action 三专家通过 Masked Joint Attention 交换信息。</figcaption></figure>
+<h3 id="vla-framework-comparison">框架对照：Qwen-Drive-1.0</h3>
+<figure data-zoom-image="vla/qwen-drive-figure2.png"><a href="assets/vla/qwen-drive-figure2.png" aria-label="放大查看 Qwen-Drive-1.0 论文 Figure 2 整体架构图"><img src="assets/vla/qwen-drive-figure2.png" width="2025" height="975" alt="Qwen-Drive-1.0 整体架构：共享视觉编码器和视觉语言模型，连接 BEV 感知头与 Planning Expert。" loading="lazy" decoding="async"></a><figcaption>Qwen-Drive-1.0 · Figure 2 · 共享视觉语言主干，外接 BEV 感知头与 Planning Expert。来源：<a href="https://arxiv.org/pdf/2609.00111#page=3">论文第 3 页</a>。点击图片可放大对照。</figcaption></figure>
 <h3>我复现的闭环流程</h3>
 <ol class="notes"><li><strong>采集观测：</strong>CARLA 提供六路相机图像、自车状态与导航指令。</li><li><strong>模型推理：</strong>加载官方 Stage 3 权重，联合处理视觉、感知与动作信息，输出规划轨迹。</li><li><strong>车辆执行：</strong>PID 将轨迹转为转向、油门与制动；执行后采集下一帧，形成闭环。</li><li><strong>记录结果：</strong>同步保存多视图可视化与路线评分，将模型输出对应到具体驾驶场景。</li></ol>
 <h2 id="vla-results">复现运行与代表路线结果</h2>
