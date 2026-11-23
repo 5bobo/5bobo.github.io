@@ -250,3 +250,10 @@ td {font-variant-numeric:tabular-nums}
 
 @media(max-width:900px) {.mpc-objective .objective-row {grid-template-columns:1fr;gap:12px}}
 @media(max-width:650px) {.mpc-objective .loss-equation {font-size:1.1rem}}
+
+/* Preserve the full six-camera + BEV layout without letterboxing or cropping. */
+#vla > figure img {height:auto;max-height:none}
+#vla video {aspect-ratio:11/3;height:auto;background:var(--field)}
+#vla .stage-sequence figure > a {aspect-ratio:16/9}
+#vla .stage-sequence figure img {padding:0}
+#vla .experiment-note {margin-top:26px}

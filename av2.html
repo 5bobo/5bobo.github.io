@@ -1,11 +1,12 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AV2 多智能体运动预测 | Research Portfolio</title><link rel="stylesheet" href="style.css?v=7"><script src="site.js?v=7" defer></script></head>
+<title>AV2 多智能体运动预测 | Research Portfolio</title><link rel="stylesheet" href="style.css?v=9"><script src="site.js?v=9" defer></script></head>
 <body><a class="skip" href="#main">跳到正文</a>
 <header class="shell mast"><a class="brand" href="index.html">Research Portfolio</a><nav class="project-nav" aria-label="项目与源码">
 <div><a href="ppo.html">PPO 自动驾驶</a><a href="https://github.com/5bobo/CASE">GitHub ↗</a></div>
 <div><a href="av2.html">AV2 运动预测</a><a href="https://github.com/5bobo/World-Model-AV2">GitHub ↗</a></div>
 <div><a href="robotics.html">字典序与 MPC</a><a href="robotics.html#repositories">GitHub ↗</a></div>
+<div><a href="vla.html">VLA 复现</a><a href="https://github.com/xiaomi-research/unidrivevla">原项目 ↗</a></div>
 <div><a href="detection.html">景区目标检测</a><a href="https://github.com/5bobo/Scenic-danger-zone-recognition">GitHub ↗</a></div></nav></header><main class="shell" id="main"><a class="back" href="index.html#research">← 研究项目</a><article class="study" id="av2">
 <header><p class="method">Argoverse 2 / Joint forecasting / Future refinement</p><h1>AV2 多智能体运动预测</h1><p>从历史轨迹与矢量地图出发，同时预测多个交通参与者未来 6 秒的运动，生成六组联合未来与整场概率。</p></header>
 <dl class="talk-track"><div><dt>研究问题</dt><dd>怎样让多个主体的未来在同一候选中相互协调，并选出更合理的联合预测？</dd></div><div><dt>我的做法</dt><dd>实现联合提案、未来交互细化和独立场景评分，串联训练、预测、评测与动态可视化。</dd></div><div><dt>实验效果</dt><dd>全量细化模型在 22,940 个 holdout 场景上，Best-of-6 FDE 为 1.817 m。</dd></div></dl>

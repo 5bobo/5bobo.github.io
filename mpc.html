@@ -1,11 +1,12 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Multi-Robot Cooperative Planning with MPC | Research Portfolio</title><link rel="stylesheet" href="style.css?v=8"><script src="site.js?v=7" defer></script></head>
+<title>Multi-Robot Cooperative Planning with MPC | Research Portfolio</title><link rel="stylesheet" href="style.css?v=9"><script src="site.js?v=9" defer></script></head>
 <body><a class="skip" href="#main">跳到正文</a>
 <header class="shell mast"><a class="brand" href="index.html">Research Portfolio</a><nav class="project-nav" aria-label="项目与源码">
 <div><a href="ppo.html">PPO 自动驾驶</a><a href="https://github.com/5bobo/CASE">GitHub ↗</a></div>
 <div><a href="av2.html">AV2 运动预测</a><a href="https://github.com/5bobo/World-Model-AV2">GitHub ↗</a></div>
 <div><a href="robotics.html">字典序与 MPC</a><a href="robotics.html#repositories">GitHub ↗</a></div>
+<div><a href="vla.html">VLA 复现</a><a href="https://github.com/xiaomi-research/unidrivevla">原项目 ↗</a></div>
 <div><a href="detection.html">景区目标检测</a><a href="https://github.com/5bobo/Scenic-danger-zone-recognition">GitHub ↗</a></div></nav></header><main class="shell" id="main"><a class="back" href="index.html#research">← 研究项目</a><article class="study" id="mpc">
 <header><p class="method">CVT / EMD / MPC</p><h1>多机器人协同搬运</h1><p>用 CVT 生成站位、EMD 分配机器人，再用两阶段 MPC 完成协同搬运。</p></header><dl class="talk-track"><div><dt>研究问题</dt><dd>怎样把货物轮廓转化为协同搬运轨迹？</dd></div><div><dt>我的做法</dt><dd>从生成站位到分配机器人，再滚动求解控制。</dd></div><div><dt>实验效果</dt><dd>实现从站位生成、机器人分配到接近货物与协同搬运的完整流程。</dd></div></dl><nav class="chapter" aria-label="项目目录"><a href="#method">站位与控制</a><a href="#demos">搬运回放</a><a href="#mpc-results">结果</a></nav>
 <h2 id="method">站位生成与机器人分配</h2><ul class="notes"><li>CVT：在货物边界内生成参考站位。</li><li>EMD：根据距离与近邻结构差异匹配机器人和站位。</li></ul>

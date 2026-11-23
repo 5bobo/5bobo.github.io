@@ -1,11 +1,12 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Reinforcement Learning for Autonomous Driving | Research Portfolio</title><link rel="stylesheet" href="style.css?v=7"><script src="site.js?v=7" defer></script></head>
+<title>Reinforcement Learning for Autonomous Driving | Research Portfolio</title><link rel="stylesheet" href="style.css?v=9"><script src="site.js?v=9" defer></script></head>
 <body><a class="skip" href="#main">跳到正文</a>
 <header class="shell mast"><a class="brand" href="index.html">Research Portfolio</a><nav class="project-nav" aria-label="项目与源码">
 <div><a href="ppo.html">PPO 自动驾驶</a><a href="https://github.com/5bobo/CASE">GitHub ↗</a></div>
 <div><a href="av2.html">AV2 运动预测</a><a href="https://github.com/5bobo/World-Model-AV2">GitHub ↗</a></div>
 <div><a href="robotics.html">字典序与 MPC</a><a href="robotics.html#repositories">GitHub ↗</a></div>
+<div><a href="vla.html">VLA 复现</a><a href="https://github.com/xiaomi-research/unidrivevla">原项目 ↗</a></div>
 <div><a href="detection.html">景区目标检测</a><a href="https://github.com/5bobo/Scenic-danger-zone-recognition">GitHub ↗</a></div></nav></header><main class="shell" id="main"><a class="back" href="index.html#research">← 研究项目</a><article class="study" id="ppo">
 <header><p class="method">PPO / CARLA</p><h1>无信号路口通行决策</h1><p>在 CARLA 中训练 PPO，通过车辆运动历史和语义 BEV 决定目标车速。</p></header><dl class="talk-track"><div><dt>研究问题</dt><dd>什么时候等待，什么时候通过？</dd></div><div><dt>我的做法</dt><dd>融合 LSTM 运动历史、CNN 语义 BEV 与交叉注意力，学习交互式速度决策。</dd></div><div><dt>实验效果</dt><dd>5 个训练种子平均成功率为 96.8%。</dd></div></dl><nav class="chapter" aria-label="项目目录"><a href="#demos">演示</a><a href="#method">方法</a><a href="#ppo-results">结果</a><a href="#ablation">消融</a></nav>
 <h2 id="demos">闭环通行演示</h2>

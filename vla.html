@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UniDriveVLA 自动驾驶复现 | Research Portfolio</title><link rel="stylesheet" href="style.css?v=9"><script src="site.js?v=9" defer></script></head>
+<body><a class="skip" href="#main">跳到正文</a>
+<header class="shell mast"><a class="brand" href="index.html">Research Portfolio</a><nav class="project-nav" aria-label="项目与源码">
+<div><a href="ppo.html">PPO 自动驾驶</a><a href="https://github.com/5bobo/CASE">GitHub ↗</a></div>
+<div><a href="av2.html">AV2 运动预测</a><a href="https://github.com/5bobo/World-Model-AV2">GitHub ↗</a></div>
+<div><a href="robotics.html">字典序与 MPC</a><a href="robotics.html#repositories">GitHub ↗</a></div>
+<div><a href="vla.html">VLA 复现</a><a href="https://github.com/xiaomi-research/unidrivevla">原项目 ↗</a></div>
+<div><a href="detection.html">景区目标检测</a><a href="https://github.com/5bobo/Scenic-danger-zone-recognition">GitHub ↗</a></div></nav></header><main class="shell" id="main"><a class="back" href="index.html#research">← 研究项目</a><article class="study" id="vla">
+<header><p class="method">开源项目复现 / Qwen3-VL-2B / CARLA Bench2Drive</p><h1>UniDriveVLA 自动驾驶复现</h1>
+<p>复现小米汽车与华中科技大学开源的 UniDriveVLA，使用官方 Base Stage 3 的 2B 权重，将六路环视图像、场景理解与轨迹规划接入 CARLA 闭环驾驶。</p>
+<a href="https://github.com/xiaomi-research/unidrivevla">原项目源码 ↗</a></header>
+<dl class="talk-track"><div><dt>复现目标</dt><dd>跑通视觉语言动作模型，从多视角输入到轨迹预测与车辆控制。</dd></div><div><dt>我的工作</dt><dd>完成服务器环境与评测配置适配，运行闭环场景并整理多视图预测、BEV 和评测结果。</dd></div><div><dt>运行结果</dt><dd>本批次 28 条评测记录中，18 条完成全路线；展示施工绕行、车辆切入与路口转弯。</dd></div></dl>
+<nav class="chapter" aria-label="项目目录"><a href="#vla-demos">闭环回放</a><a href="#vla-method">模型流程</a><a href="#vla-results">复现结果</a><a href="#vla-work">工程工作</a></nav>
+<h2 id="vla-demos">从环视画面到闭环驾驶</h2>
+<ul class="notes"><li><strong>左侧六视角：</strong>同步观察前方、侧方与后方交通；前视画面叠加模型输出的规划路径。</li><li><strong>右侧 BEV：</strong>在俯视场景中对照自车、周车与预测路径，连接视觉输入和车辆实际运动。</li><li><strong>阅读方式：</strong>先看前方交通变化，再看规划路径与自车运动如何衔接；支持全屏播放。</li></ul>
+<h3>施工绕行 · 接近障碍并继续通行</h3>
+<figure><video width="1584" height="432" controls playsinline preload="none" poster="assets/vla/construction.webp" src="assets/vla/construction.mp4" aria-label="我的复现回放 · RouteScenario 1833 · 施工占道场景 · 36.0 s"></video><figcaption>我的复现回放 · RouteScenario 1833 · 施工占道场景 · 36.0 s</figcaption></figure>
+<ol class="stage-sequence" aria-label="施工场景的三个阶段">
+<li><figure data-zoom-image="vla/construction-approach.webp"><a href="assets/vla/construction-approach.webp" aria-label="放大查看：4 s · 前方出现施工区域与提示设施。"><img src="assets/vla/construction-approach.webp" width="480" height="270" alt="4 s · 前方出现施工区域与提示设施。" loading="lazy" decoding="async"></a><figcaption>4 s · 前方出现施工区域与提示设施。</figcaption></figure></li>
+<li><figure data-zoom-image="vla/construction-pass.webp"><a href="assets/vla/construction-pass.webp" aria-label="放大查看：17 s · 接近施工提示，对照规划路径与可通行空间。"><img src="assets/vla/construction-pass.webp" width="480" height="270" alt="17 s · 接近施工提示，对照规划路径与可通行空间。" loading="lazy" decoding="async"></a><figcaption>17 s · 接近施工提示，对照规划路径与可通行空间。</figcaption></figure></li>
+<li><figure data-zoom-image="vla/construction-return.webp"><a href="assets/vla/construction-return.webp" aria-label="放大查看：29 s · 通过施工区域，继续沿路线前进。"><img src="assets/vla/construction-return.webp" width="480" height="270" alt="29 s · 通过施工区域，继续沿路线前进。" loading="lazy" decoding="async"></a><figcaption>29 s · 通过施工区域，继续沿路线前进。</figcaption></figure></li></ol>
+<h3>车辆切入 · 观察周车与规划路径</h3>
+<figure><video width="1584" height="432" controls playsinline preload="none" poster="assets/vla/cut-in.webp" src="assets/vla/cut-in.mp4" aria-label="我的复现回放 · RouteScenario 2286 · HighwayCutIn · 13.3 s"></video><figcaption>我的复现回放 · RouteScenario 2286 · HighwayCutIn · 13.3 s</figcaption></figure>
+<div class="pair"><figure data-zoom-image="vla/cut-in-front.webp"><a href="assets/vla/cut-in-front.webp" aria-label="放大查看：前视细节 · 周车相对位置与自车规划路径投影。"><img src="assets/vla/cut-in-front.webp" width="480" height="270" alt="前视细节 · 周车相对位置与自车规划路径投影。" loading="lazy" decoding="async"></a><figcaption>前视细节 · 周车相对位置与自车规划路径投影。</figcaption></figure><figure data-zoom-image="vla/cut-in-bev.webp"><a href="assets/vla/cut-in-bev.webp" aria-label="放大查看：同一时刻的 BEV · 从俯视角对照车辆位置与规划。"><img src="assets/vla/cut-in-bev.webp" width="540" height="540" alt="同一时刻的 BEV · 从俯视角对照车辆位置与规划。" loading="lazy" decoding="async"></a><figcaption>同一时刻的 BEV · 从俯视角对照车辆位置与规划。</figcaption></figure></div>
+<h3>路口转弯 · 路径随车辆推进</h3>
+<figure><video width="1584" height="432" controls playsinline preload="none" poster="assets/vla/turn.webp" src="assets/vla/turn.mp4" aria-label="我的复现回放 · RouteScenario 2397 · 无信号路口转弯 · 10.8 s"></video><figcaption>我的复现回放 · RouteScenario 2397 · 无信号路口转弯 · 10.8 s</figcaption></figure>
+<h2 id="vla-method">理解、感知与规划的统一模型</h2>
+<figure data-zoom-image="vla/framework.png"><a href="assets/vla/framework.png" aria-label="放大查看：原作者方法框架 · Understanding、Perception、Action 三专家通过 Masked Joint Attention 交换信息。"><img src="assets/vla/framework.png" width="783" height="451" alt="原作者方法框架 · Understanding、Perception、Action 三专家通过 Masked Joint Attention 交换信息。" loading="lazy" decoding="async"></a><figcaption>原作者方法框架 · Understanding、Perception、Action 三专家通过 Masked Joint Attention 交换信息。</figcaption></figure>
+<ul class="notes"><li><strong>理解专家：</strong>以 Qwen3-VL 为基础处理视觉与语言信息，为驾驶任务提供语义特征。</li><li><strong>感知专家：</strong>通过稀疏空间查询表达检测、地图和占用等信息，为规划提供空间先验。</li><li><strong>规划专家：</strong>结合语义与空间特征生成未来自车轨迹，再由控制器执行。</li></ul>
+<h3>我复现的闭环流程</h3>
+<ol class="notes"><li><strong>采集观测：</strong>CARLA 提供六路相机图像、自车状态与导航指令。</li><li><strong>模型推理：</strong>加载官方 Stage 3 权重，联合处理视觉、感知与动作信息，输出规划轨迹。</li><li><strong>车辆执行：</strong>PID 将轨迹转为转向、油门与制动；执行后采集下一帧，形成闭环。</li><li><strong>记录结果：</strong>同步保存多视图可视化与路线评分，将模型输出对应到具体驾驶场景。</li></ol>
+<h2 id="vla-results">复现运行与代表路线结果</h2>
+<p>CARLA Town12 · UniDriveVLA Base Stage 3 / 2B。以下三条路线与上方视频对应，均完成全路线，路线完成度与 Driving Score 均为 100。</p>
+<div class="table-scroll"><table><caption>本次复现中的三条展示路线</caption><thead><tr><th scope="col">路线</th><th scope="col">场景</th><th scope="col">完成度</th><th scope="col">Driving Score</th><th scope="col">状态</th></tr></thead><tbody>
+<tr><th scope="row">1833</th><td>施工占道</td><td>100%</td><td>100.00</td><td>Completed</td></tr>
+<tr><th scope="row">2286</th><td>高速车辆切入</td><td>100%</td><td>100.00</td><td>Completed</td></tr>
+<tr><th scope="row">2397</th><td>无信号路口转弯</td><td>100%</td><td>100.00</td><td>Completed</td></tr>
+</tbody></table></div>
+<ul class="notes"><li><strong>批次规模：</strong>28 条评测记录，18 条路线完成度达到 100%。</li><li><strong>复现产出：</strong>覆盖施工与事故绕行、路口交互、车流汇入、车辆切入等场景，形成可逐帧查看的闭环记录。</li></ul>
+<h2 id="vla-work">复现中的工程工作</h2>
+<ul class="notes"><li><strong>部署与评测配置：</strong>适配 CARLA 路径、模型权重和单 GPU 评测入口，打通模型到模拟器的运行链路。</li><li><strong>推理与结果分析：</strong>联合检查多视角图像、规划轨迹、BEV 与路线评分，将预测过程与车辆执行对应起来。</li><li><strong>模型适配接口：</strong>在代码中扩展 Action Expert 的 LoRA 配置与 Stage 3 权重键映射，为参数高效适配提供训练入口。</li></ul>
+<p class="experiment-note">原方法与框架图来自 <a href="https://github.com/xiaomi-research/unidrivevla">UniDriveVLA 开源项目</a>（<a href="assets/vla/LICENSE.txt">Apache-2.0</a>）；本页视频、分镜与路线成绩来自我的服务器复现运行。<a href="https://arxiv.org/abs/2604.02190">论文</a> · <a href="https://xiaomi-research.github.io/unidrivevla/">原项目主页</a></p>
+</article><nav class="related" aria-label="其他研究"><a href="robotics.html">多机器人协同规划</a><a href="detection.html">景区目标检测</a></nav></main>
+<footer class="shell mast"><span>Robotics &amp; Autonomous Systems</span><a href="#main">返回顶部 ↑</a></footer>
+<dialog aria-label="科研图放大查看"><form method="dialog"><button>关闭图像 ×</button></form><img alt=""><p></p></dialog>
+</body></html>

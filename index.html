@@ -1,13 +1,14 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Research Portfolio | Robotics & Autonomous Systems</title><link rel="stylesheet" href="style.css?v=7"><script src="site.js?v=7" defer></script></head>
+<title>Research Portfolio | Robotics & Autonomous Systems</title><link rel="stylesheet" href="style.css?v=9"><script src="site.js?v=9" defer></script></head>
 <body><a class="skip" href="#main">跳到正文</a>
 <header class="shell mast"><a class="brand" href="index.html">Research Portfolio</a><nav class="project-nav" aria-label="项目与源码">
 <div><a href="ppo.html">PPO 自动驾驶</a><a href="https://github.com/5bobo/CASE">GitHub ↗</a></div>
 <div><a href="av2.html">AV2 运动预测</a><a href="https://github.com/5bobo/World-Model-AV2">GitHub ↗</a></div>
 <div><a href="robotics.html">字典序与 MPC</a><a href="robotics.html#repositories">GitHub ↗</a></div>
+<div><a href="vla.html">VLA 复现</a><a href="https://github.com/xiaomi-research/unidrivevla">原项目 ↗</a></div>
 <div><a href="detection.html">景区目标检测</a><a href="https://github.com/5bobo/Scenic-danger-zone-recognition">GitHub ↗</a></div></nav></header><main class="shell" id="main"><section class="intro"><h1><span class="intro-line">Intelligent <span>Decision-Making</span></span><span class="intro-line">&amp; Visual Perception</span></h1>
-<p>强化学习决策、多智能体预测、协同规划与目标检测。</p></section>
+<p>强化学习决策、多智能体预测、协同规划、VLA 复现与目标检测。</p></section>
 <section id="research" aria-label="Selected Research"><article class="entry">
 <div class="entry-copy"><p class="method">PPO / CARLA</p><h2><a href="ppo.html">无信号路口通行决策</a></h2><p>融合运动历史与语义 BEV 学习通行时机，五个训练种子的平均成功率为 96.8%。</p>
 <a class="project-link" href="ppo.html" aria-label="查看项目：无信号路口通行决策">查看项目 <span aria-hidden="true">↗</span></a></div>
@@ -16,8 +17,8 @@
 <div class="entry-copy"><p class="method">Lexicographic Optimization / MPC</p><h2><a href="robotics.html">字典序优化与协同规划</a></h2><p>从任务优先级到站位分配，分别研究编队规划与协同搬运。</p>
 <a class="project-link" href="robotics.html" aria-label="查看项目：多机器人协同规划">查看项目 <span aria-hidden="true">↗</span></a></div>
 <figure><a href="robotics.html" aria-label="查看项目：多机器人协同规划"><img width="4458" height="4592" src="assets/lex/static-trajectory.png" alt="四机器人编队通过障碍区域的历史轨迹"></a><figcaption>四机器人编队规划 · 障碍环境仿真</figcaption></figure>
-</article><article class="entry"><div class="entry-copy"><p class="method">YOLOv5 / EIoU</p><h2><a href="detection.html">景区危险目标与行为检测</a></h2><p>识别明火、跌倒、吸烟与站立行人，最高 mAP@0.5 达 89.60%。</p><a class="project-link" href="detection.html">查看项目 ↗</a></div><figure class="scene-preview"><a href="detection.html"><img src="assets/detection/skyline.jpg" width="1280" height="720" alt="滑雪场画面中的行人检测框和危险区域"></a><figcaption>滑雪场视频 · 行人与危险区域检测</figcaption></figure></article></section><section id="about" class="about"><h2>项目仓库</h2>
-<nav aria-label="代码仓库"><a href="https://github.com/5bobo/CASE">CASE</a><a href="https://github.com/5bobo/World-Model-AV2">AV2 Forecasting</a><a href="https://github.com/5bobo/Lexicographic">Lexicographic</a><a href="https://github.com/5bobo/MPC">MPC</a><a href="https://github.com/5bobo/Scenic-danger-zone-recognition">Scenic Detection</a></nav></section></main>
+</article><article class="entry"><div class="entry-copy"><p class="method">开源项目复现 / VLA / Bench2Drive</p><h2><a href="vla.html">UniDriveVLA 自动驾驶复现</a></h2><p>基于官方 2B 权重跑通 CARLA 闭环，展示施工绕行、车辆切入与路口转弯的多视角预测和执行。</p><a class="project-link" href="vla.html">查看复现 ↗</a></div><figure class="scene-preview"><a href="vla.html"><img src="assets/vla/cut-in.webp" width="1980" height="540" alt="UniDriveVLA 复现中的六路环视与右侧 BEV" loading="lazy"></a><figcaption>开源复现 · 六路环视与闭环规划回放</figcaption></figure></article><article class="entry"><div class="entry-copy"><p class="method">YOLOv5 / EIoU</p><h2><a href="detection.html">景区危险目标与行为检测</a></h2><p>识别明火、跌倒、吸烟与站立行人，最高 mAP@0.5 达 89.60%。</p><a class="project-link" href="detection.html">查看项目 ↗</a></div><figure class="scene-preview"><a href="detection.html"><img src="assets/detection/skyline.jpg" width="1280" height="720" alt="滑雪场画面中的行人检测框和危险区域"></a><figcaption>滑雪场视频 · 行人与危险区域检测</figcaption></figure></article></section><section id="about" class="about"><h2>项目仓库</h2>
+<nav aria-label="代码仓库"><a href="https://github.com/5bobo/CASE">CASE</a><a href="https://github.com/5bobo/World-Model-AV2">AV2 Forecasting</a><a href="https://github.com/5bobo/Lexicographic">Lexicographic</a><a href="https://github.com/5bobo/MPC">MPC</a><a href="https://github.com/xiaomi-research/unidrivevla">UniDriveVLA（复现来源）</a><a href="https://github.com/5bobo/Scenic-danger-zone-recognition">Scenic Detection</a></nav></section></main>
 <footer class="shell mast"><span>Robotics &amp; Autonomous Systems</span><a href="#main">返回顶部 ↑</a></footer>
 <dialog aria-label="科研图放大查看"><form method="dialog"><button>关闭图像 ×</button></form><img alt=""><p></p></dialog>
 </body></html>
