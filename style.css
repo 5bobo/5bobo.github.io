@@ -260,3 +260,35 @@ td {font-variant-numeric:tabular-nums}
 
 .project-nav .nav-project {font-weight:650}
 #locomotion table {min-width:620px}
+
+/* Research figures and methods on the locomotion page. */
+#locomotion h3 {font-size:clamp(1.2rem,2.3vw,1.65rem);margin-top:30px}
+#locomotion .locomotion-compact {min-width:460px}
+#locomotion .locomotion-comparison {min-width:700px}
+#locomotion .locomotion-comparison td {vertical-align:top;line-height:1.55}
+#locomotion .locomotion-comparison tbody th {vertical-align:top}
+#locomotion .pair {align-items:start;margin-top:18px}
+#locomotion .pair img {max-height:none;aspect-ratio:auto}
+#locomotion .pair figure[data-zoom-image] > a {aspect-ratio:auto}
+#locomotion .pair figure[data-zoom-image] img {position:static;width:100%;height:auto;padding:0}
+#locomotion > figure img {max-height:none}
+#locomotion .locomotion-details {margin:22px 0 0;border-block:1px solid var(--rule)}
+#locomotion .locomotion-details summary {cursor:pointer;padding:13px 0;color:var(--link);font-weight:650}
+#locomotion .locomotion-details > p {margin-top:12px}
+.locomotion-equations {margin:14px 0;padding:12px 16px;background:var(--field);overflow:auto}
+.locomotion-equations p {color:var(--ink);font-size:.98rem}
+.locomotion-equations p + p {margin-top:8px}
+.sensor-flow {list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin:22px 0;padding:0;border-block:1px solid var(--rule)}
+.sensor-flow li {position:relative;padding:15px 22px 15px 14px}
+.sensor-flow li + li {border-inline-start:1px solid var(--rule)}
+.sensor-flow strong,.sensor-flow span {display:block}
+.sensor-flow strong {color:var(--link);margin-bottom:5px}
+.sensor-flow span {color:var(--secondary);font-size:.93rem;line-height:1.6}
+@media(max-width:650px) {
+  .sensor-flow {grid-template-columns:1fr}
+  .sensor-flow li {padding:10px 0}
+  .sensor-flow li + li {border-inline-start:0;border-top:1px solid var(--rule)}
+}
+#locomotion .checkpoint-video {aspect-ratio:32/9}
+#locomotion .height-scan-pair figure[data-zoom-image] > a {aspect-ratio:16/10}
+#locomotion .height-scan-pair figure[data-zoom-image] img {width:100%;height:100%;object-fit:contain}
