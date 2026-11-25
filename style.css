@@ -289,6 +289,22 @@ td {font-variant-numeric:tabular-nums}
   .sensor-flow li {padding:10px 0}
   .sensor-flow li + li {border-inline-start:0;border-top:1px solid var(--rule)}
 }
-#locomotion .checkpoint-video {aspect-ratio:32/9}
 #locomotion .height-scan-pair figure[data-zoom-image] > a {aspect-ratio:16/10}
 #locomotion .height-scan-pair figure[data-zoom-image] img {width:100%;height:100%;object-fit:contain}
+
+#locomotion .locomotion-equations {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px 24px;
+  padding:14px 0;
+  background:transparent;
+  border-block:1px solid var(--rule);
+}
+.locomotion-formula > span {display:block;font-weight:650;font-size:.9rem;color:var(--secondary)}
+#locomotion .locomotion-formula .loss-equation {font-size:clamp(1rem,1.75vw,1.28rem)}
+#locomotion .locomotion-details > figure {margin:16px 0}
+@media(max-width:720px) {
+  #locomotion .locomotion-equations {grid-template-columns:1fr}
+}
+#locomotion .locomotion-formula {min-width:0}
+#locomotion .locomotion-formula:only-child {grid-column:1 / -1}
