@@ -257,3 +257,6 @@ td {font-variant-numeric:tabular-nums}
 #vla .stage-sequence figure > a {aspect-ratio:16/9}
 #vla .stage-sequence figure img {padding:0}
 #vla .experiment-note {margin-top:26px}
+
+.project-nav .nav-project {font-weight:650}
+#locomotion table {min-width:620px}

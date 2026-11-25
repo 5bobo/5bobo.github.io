@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>机器人强化学习运动控制 | Research Portfolio</title><link rel="stylesheet" href="style.css?v=11"><script src="site.js?v=9" defer></script></head>
+<body><a class="skip" href="#main">跳到正文</a>
+<header class="shell mast"><a class="brand" href="index.html">Research Portfolio</a><nav class="project-nav" aria-label="项目与源码">
+<a class="nav-project" href="locomotion.html">机器人 RL 运动控制</a>
+<div><a href="ppo.html">PPO 自动驾驶</a><a href="https://github.com/5bobo/CASE">GitHub ↗</a></div>
+<div><a href="av2.html">AV2 运动预测</a><a href="https://github.com/5bobo/World-Model-AV2">GitHub ↗</a></div>
+<div><a href="robotics.html">字典序与 MPC</a><a href="robotics.html#repositories">GitHub ↗</a></div>
+<div><a href="vla.html">VLA 复现</a><a href="https://github.com/xiaomi-research/unidrivevla">原项目 ↗</a></div>
+<div><a href="detection.html">景区目标检测</a><a href="https://github.com/5bobo/Scenic-danger-zone-recognition">GitHub ↗</a></div></nav></header><main class="shell" id="main"><a class="back" href="index.html#research">← 研究项目</a>
+<article class="study" id="locomotion">
+<header><p class="method">PPO / MuJoCo / Unitree Go2 &amp; G1</p><h1>机器人强化学习运动控制</h1><p>基于 Unitree RL MjLab 训练三项仿真策略，从 Go2 的速度追踪与复杂地形运动，到 G1 的全身动作模仿。</p></header>
+<dl class="talk-track">
+<div><dt>训练工作</dt><dd>在每项任务中使用 4,096 个并行仿真环境训练 PPO，并从检查点录制策略回放。</dd></div>
+<div><dt>策略输出</dt><dd>Actor 输出关节位置偏移，底层 PD 追踪目标关节角。</dd></div>
+<div><dt>运行频率</dt><dd>策略 50 Hz，MuJoCo 200 Hz。每次策略更新执行 4 个仿真步。</dd></div>
+</dl>
+<nav class="chapter" aria-label="项目目录"><a href="#flat">Go2 平地</a><a href="#rough">Go2 地形</a><a href="#dance">G1 舞蹈</a><a href="#training">训练设计对照</a></nav>
+
+<h2 id="flat">Go2 平地速度追踪</h2>
+<p>给定机身坐标系下的前进、横移和偏航速度指令，策略根据机器人状态调整各关节目标。</p>
+<figure><video width="960" height="540" controls playsinline preload="none" poster="assets/locomotion/flat.webp" src="assets/locomotion/flat.mp4" aria-label="Go2 平地速度追踪策略回放"></video><figcaption>检查点第 10,000 次迭代 · 前向速度指令依次为 0、0.40、0.75 m/s。</figcaption></figure>
+<figure data-zoom-image="locomotion/velocity-response.png"><a href="assets/locomotion/velocity-response.png"><img src="assets/locomotion/velocity-response.png" width="1600" height="480" loading="lazy" decoding="async" alt="平地回放中前向速度指令与实测机身前向速度的时序对照"></a><figcaption>同一回放的前向速度响应。指令为 0.40 与 0.75 m/s 时，取切换后 1 s 起至下一次切换或回放结束，仿真测得的均值分别为 0.34 与 0.67 m/s。</figcaption></figure>
+<ul class="notes"><li><strong>观测</strong>　速度指令、步态相位、机身角速度、重力投影、关节状态与上一动作。</li><li><strong>奖励</strong>　追踪平面线速度与偏航角速度，配合步态、抬脚、滑移和动作平滑项。</li></ul>
+
+<h2 id="rough">Go2 复杂地形运动</h2>
+<p>任务仍是跟随速度指令。Actor 增加机身周围的射线高度扫描，根据前方高差调整关节目标。</p>
+<figure><video width="960" height="540" controls playsinline preload="none" poster="assets/locomotion/rough.webp" src="assets/locomotion/rough.mp4" aria-label="Go2 台阶地形运动策略回放"></video><figcaption>检查点第 5,000 次迭代 · 训练地形中的台阶类型 · 固定前向指令。</figcaption></figure>
+<ul class="notes"><li><strong>地形输入</strong>　高度扫描覆盖机身周围 1.6 × 1.0 m，网格步距 0.10 m。平地策略省去这一输入。</li><li><strong>课程学习</strong>　训练包含台阶、坡面和随机起伏。按行进表现调整地形难度，逐步增加落脚挑战。</li></ul>
+
+<h2 id="dance">G1 舞蹈动作跟踪</h2>
+<p>以 <code>dance1_subject2</code> 为参考。策略逐帧跟踪全身动作，同时维持平衡并处理接触。</p>
+<figure><video width="960" height="540" controls playsinline preload="none" poster="assets/locomotion/dance.webp" src="assets/locomotion/dance.mp4" aria-label="G1 舞蹈动作跟踪策略回放"></video><figcaption>检查点第 30,000 次迭代 · 回放第 6–20 秒 · 实体为策略控制下的 G1，半透明叠影为参考姿态。</figcaption></figure>
+<ul class="notes"><li><strong>RSI</strong>　从采到的参考帧初始化机器人根部和关节状态，让策略在舞蹈中段也能开始跟踪。</li><li><strong>Adaptive sampling</strong>　按各时间段的终止失败频率提高采样概率，并保留均匀采样成分。</li><li><strong>运动重定向</strong>　舞蹈训练从已匹配 G1 关节的参考轨迹开始。CSV 转 NPZ 用于时间重采样，并通过正运动学生成各身体部位的参考状态。</li></ul>
+
+<h2 id="training">三项任务的训练设计</h2>
+<div class="table-scroll" role="region" aria-label="三项任务的训练设计对照" tabindex="0"><table>
+<caption>同一套 PPO 训练链路中，按任务组织 Actor 输入与 Critic 训练信息。</caption>
+<thead><tr><th scope="col">任务</th><th scope="col">Actor 输入重点</th><th scope="col">Critic 额外观测</th><th scope="col">奖励重点</th></tr></thead>
+<tbody>
+<tr><th scope="row">Go2 平地</th><td>速度指令、相位与本体状态</td><td>基座线速度、足端高度、腾空时间、接触与接触力</td><td>线速度与偏航跟踪、步态与足端稳定</td></tr>
+<tr><th scope="row">Go2 地形</th><td>平地输入＋地形高度扫描</td><td>基座线速度与足端接触等信息</td><td>速度跟踪与足端正则，配合地形课程</td></tr>
+<tr><th scope="row">G1 舞蹈</th><td>参考关节状态、相对朝向、本体状态</td><td>参考锚点相对位置、机身线速度与各身体部位位姿</td><td>根部与身体位姿、速度跟踪，约束关节限位和自碰撞</td></tr>
+</tbody></table></div>
+<ul class="notes"><li><strong>非对称 Actor–Critic</strong>　训练时给 Critic 更完整的仿真状态，估计回报。回放时由 Actor 按自身观测出动作。</li><li><strong>位置目标与时间尺度</strong>　目标关节角等于默认关节角加动作偏移。Go2 的偏移缩放为 0.25，G1 按关节缩放。控制周期 20 ms，物理步长 5 ms。</li></ul>
+</article>
+<nav class="related" aria-label="其他项目"><a href="ppo.html">PPO 自动驾驶</a><a href="robotics.html">多机器人协同规划</a></nav></main>
+<footer class="shell mast"><span>Robotics &amp; Autonomous Systems</span><a href="#main">返回顶部 ↑</a></footer>
+<dialog aria-label="科研图放大查看"><form method="dialog"><button>关闭图像 ×</button></form><img alt=""><p></p></dialog>
+</body></html>
