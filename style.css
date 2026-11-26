@@ -393,3 +393,41 @@ td {font-variant-numeric:tabular-nums}
 @media(max-width:450px) {
   #decplm .loss-equation {font-size:clamp(.86rem,4.25vw,1.08rem)}
 }
+
+/* Keep motion evidence and its readout on the same baseline. */
+#locomotion .locomotion-evidence figure[data-zoom-image] > a {aspect-ratio:16/9;position:relative}
+#locomotion .locomotion-evidence figure[data-zoom-image] img {position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+#locomotion video {display:block;width:100%;height:auto}
+#locomotion .transport-node {align-self:stretch;display:flex;flex-direction:column;justify-content:center}
+#locomotion .locomotion-evidence strong,#locomotion .locomotion-cases strong {color:var(--ink)}
+#locomotion .locomotion-cases {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:18px}
+#locomotion .locomotion-cases video {aspect-ratio:16/9}
+#locomotion .locomotion-course {display:flex;align-items:center;gap:16px;padding:12px 0;border-block:1px solid var(--rule)}
+#locomotion .locomotion-course strong,#locomotion .locomotion-course span:not(.transport-arrow) {display:block}
+#locomotion .locomotion-course strong {color:var(--link)}
+#locomotion .locomotion-course span:not(.transport-arrow) {font-size:.9rem;color:var(--secondary)}
+#locomotion .locomotion-distances {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;border-block:1px solid var(--rule);padding:12px 0;margin:16px 0 0}
+#locomotion .locomotion-distances strong {display:block;color:var(--link);font-weight:700}
+#locomotion .locomotion-distances strong {font-size:1.4rem}
+#locomotion .locomotion-distances span {display:block;color:var(--secondary);font-size:.9rem;margin:3px 0 0}
+.locomotion-dimensions dl {margin:10px 0}
+.locomotion-dimensions dl > div {display:grid;grid-template-columns:7rem minmax(0,1fr);gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--rule)}
+.locomotion-dimensions dt {font-weight:650}
+.locomotion-dimensions dd {display:grid;grid-template-columns:minmax(0,1fr) 6rem;gap:12px;align-items:center;margin:0;font-size:.88rem;font-variant-numeric:tabular-nums}
+.locomotion-dimensions dd span {text-align:right}
+.dimension-key {display:flex;flex-wrap:wrap;gap:14px;font-size:.85rem;color:var(--secondary)}
+.dimension-key span::before {content:"";display:inline-block;width:.85em;height:.85em;margin-right:.4em;background:#497a9b}
+.dimension-key span + span::before {background:#b9cbd8}
+.dimension-track {display:flex;height:12px;background:var(--field)}
+.dimension-track i:first-child {width:calc(var(--actor) * 100% / 286);background:#497a9b}
+.dimension-track i + i {width:calc(var(--extra) * 100% / 286);background:#b9cbd8}
+#locomotion .footstep-note + p {margin-top:8px}
+@media(max-width:650px) {
+  #locomotion .locomotion-cases {grid-template-columns:1fr}
+  .locomotion-dimensions dl > div {grid-template-columns:5rem minmax(0,1fr)}
+  #locomotion .locomotion-course {flex-wrap:wrap;gap:10px 14px}
+  #locomotion .locomotion-course .transport-arrow {transform:none}
+}
+@media(max-width:450px) {
+  #locomotion .locomotion-formula .loss-equation {font-size:clamp(.85rem,4vw,1rem)}
+}

@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>机器人强化学习运动控制 | Research Portfolio</title><link rel="stylesheet" href="style.css?v=14"><script src="site.js?v=9" defer></script></head>
+<title>机器人强化学习运动控制 | Research Portfolio</title><link rel="stylesheet" href="style.css?v=16"><script src="site.js?v=9" defer></script></head>
 <body><a class="skip" href="#main">跳到正文</a>
 <header class="shell mast"><a class="brand" href="index.html">Research Portfolio</a><nav class="project-nav" aria-label="项目与源码">
-<a class="nav-project" href="locomotion.html">机器人 RL 运动控制</a>
+<a class="nav-project" href="locomotion.html" aria-current="page">机器人 RL 运动控制</a>
 <a class="nav-project" href="decplm.html">四足协同搬运</a>
 <div><a href="ppo.html">PPO 自动驾驶</a><a href="https://github.com/5bobo/CASE">GitHub ↗</a></div>
 <div><a href="robotics.html">字典序与 MPC</a><a href="robotics.html#repositories">GitHub ↗</a></div>
@@ -12,77 +12,92 @@
 <header>
   <p class="method">PPO / MuJoCo / Unitree Go2 &amp; G1</p>
   <h1>机器人强化学习运动控制</h1>
-  <p>以 PPO 训练 Go2 平地速度追踪、复杂地形运动和 G1 舞蹈跟踪三项策略。结合仿真回放、训练曲线与控制公式，展示速度响应、地形适应和全身参考动作跟踪。</p>
+  <p>Go2 速度追踪、复杂地形运动与 G1 舞蹈跟踪。每项策略在 4,096 个并行 MuJoCo 环境中训练。</p>
 </header>
-<dl class="talk-track">
-  <div><dt>训练规模</dt><dd>每项任务 4,096 个并行仿真环境，分别保存并回放策略检查点。</dd></div>
-  <div><dt>控制链路</dt><dd>Actor 输出关节位置偏移，映射为目标关节角，底层 PD 跟踪。</dd></div>
-  <div><dt>时间尺度</dt><dd>策略 50 Hz，MuJoCo 200 Hz。每个动作保持 4 个仿真步。</dd></div>
-</dl>
 <nav class="chapter" aria-label="项目目录"><a href="#flat">Go2 平地</a><a href="#rough">Go2 地形</a><a href="#dance">G1 舞蹈</a><a href="#training">技术对照</a></nav>
 
 <h2 id="flat">Go2 平地速度追踪</h2>
-<p><strong>如何将期望机身速度转换成能保持平衡的四足关节动作？</strong> 策略在前进、横移和转向指令下协调四足步态。速度误差、足端接触和机身姿态用于评估跟踪质量。</p>
-<figure><video width="1600" height="900" controls playsinline preload="none" poster="assets/locomotion/flat.webp?v=13" src="assets/locomotion/flat.mp4?v=13" aria-label="Go2 平地速度追踪策略回放"></video><figcaption>第 10,000 轮策略 · 8 秒回放 · 前向速度指令依次为 0、0.40、0.75 m/s。</figcaption></figure>
-
-<figure data-zoom-image="locomotion/speed-response-hd.png"><a href="assets/locomotion/speed-response-hd.png"><img src="assets/locomotion/speed-response-hd.png" width="1520" height="589" loading="lazy" decoding="async" alt="低速回放实测前向速度。第 1 秒变为 0.40 m/s，第 4 秒变为 0.75 m/s。"></a><figcaption>指令与前向速度来自上方同一次平地回放。实测速度在指令切换后逐步上升，并随步态周期波动。</figcaption></figure>
-<h3>速度课程扩展</h3>
-<div class="table-scroll" role="region" aria-label="平地速度课程" tabindex="0">
-<table class="locomotion-compact"><thead><tr><th scope="col">训练阶段</th><th scope="col">前向 vₓ (m/s)</th><th scope="col">横向 vᵧ (m/s)</th><th scope="col">偏航 ω (rad/s)</th></tr></thead>
-<tbody><tr><th scope="row">前 5,000 轮</th><td>−0.5 ～ 1.0</td><td>−0.5 ～ 0.5</td><td>−1.0 ～ 1.0</td></tr>
-<tr><th scope="row">后 5,000 轮</th><td>−1.0 ～ 2.0</td><td>−1.0 ～ 1.0</td><td>−1.0 ～ 1.0</td></tr></tbody></table>
+<p>如何把期望机身速度变成稳定的四足步态？</p>
+<div class="pair locomotion-evidence">
+<figure><video width="1600" height="900" controls playsinline preload="none" poster="assets/locomotion/flat.webp?v=13" src="assets/locomotion/flat.mp4?v=13" aria-label="Go2 平地速度追踪策略回放"></video><figcaption><strong>速度指令阶跃</strong> · 第 10,000 轮策略 · 0 → 0.40 → 0.75 m/s。</figcaption></figure>
+<figure data-zoom-image="locomotion/speed-response-hd.png"><a href="assets/locomotion/speed-response-hd.png"><img src="assets/locomotion/speed-response-hd.png" width="1520" height="589" loading="lazy" decoding="async" alt="低速回放实测前向速度。第 1 秒变为 0.40 m/s，第 4 秒变为 0.75 m/s。"></a><figcaption><strong>同次回放的前向速度</strong> · 实测随指令上升，并保留周期性步态波动。</figcaption></figure>
 </div>
-<figure data-zoom-image="locomotion/flat-overview.png"><a href="assets/locomotion/flat-overview.png"><img src="assets/locomotion/flat-overview.png" width="1900" height="655" loading="lazy" decoding="async" alt="Go2 平地训练的回报与平面速度误差，在约第 5000 轮标出指令范围扩展"></a><figcaption>平地训练 · 浅线为每轮记录，深线为每 50 轮中位数。虚线标记 5,000 轮，背景色标记扩展后的指令阶段。回报低于 −10 的 6 条记录用向下标记表示，最低为第 8,160 轮的 −2,209.9。速度误差采用训练日志口径，在回合内按最长指令步数归一化并累加。</figcaption></figure>
-<ul class="notes">
-<li><strong>课程阶段对照。</strong> 回合平均回报从第 4,800–4,999 轮的约 56.0 降到切换后 5,150–5,349 轮的 41.6，第 9,800–9,999 轮回升到 46.5。同期平面速度误差指标约为 0.40、1.03、1.47。</li>
-</ul>
-<details class="locomotion-details"><summary>展开技术细节 · Go2 奖励与学习率</summary>
-<p>主奖励分别评价机身坐标系中的线速度和角速度。两项跟踪权重都是 1，误差增大时奖励按指数衰减。</p>
-<div class="locomotion-equations"><div class="locomotion-formula"><span>线速度奖励</span><div class="loss-equation"><math display="block" aria-label="线速度奖励"><mrow><msub><mi>r</mi><mi>v</mi></msub><mo>=</mo><mrow><mi>exp</mi><mo>(</mo><mrow><mo>−</mo><mfrac><mrow><msup><mrow><mo>‖</mo><mrow><msub><mi>v</mi><mi>xy</mi></msub><mo>−</mo><msubsup><mi>v</mi><mi>xy</mi><mtext>cmd</mtext></msubsup></mrow><mo>‖</mo></mrow><mn>2</mn></msup><mo>+</mo><mn>2</mn><msup><msub><mi>v</mi><mi>z</mi></msub><mn>2</mn></msup></mrow><mn>0.25</mn></mfrac></mrow><mo>)</mo></mrow></mrow></math></div></div>
-<div class="locomotion-formula"><span>角速度奖励</span><div class="loss-equation"><math display="block" aria-label="角速度奖励"><mrow><msub><mi>r</mi><mi>ω</mi></msub><mo>=</mo><mrow><mi>exp</mi><mo>(</mo><mrow><mo>−</mo><mfrac><mrow><msup><mrow><mo>(</mo><mrow><msub><mi>ω</mi><mi>z</mi></msub><mo>−</mo><msubsup><mi>ω</mi><mi>z</mi><mtext>cmd</mtext></msubsup></mrow><mo>)</mo></mrow><mn>2</mn></msup><mo>+</mo><mn>0.05</mn><msup><mrow><mo>‖</mo><msub><mi>ω</mi><mi>xy</mi></msub><mo>‖</mo></mrow><mn>2</mn></msup></mrow><mn>0.5</mn></mfrac></mrow><mo>)</mo></mrow></mrow></math></div></div></div>
-<ul class="notes">
-<li><strong>步态正则。</strong> 步态相位配合足端接触塑造对角步态。脚滑、落地冲击、关节限位及动作变化率各自惩罚不同的控制问题。</li>
-<li><strong>自适应学习率。</strong> 初始值为 0.001。每个小批次用旧、新高斯策略的平均 KL 散度更新学习率。</li>
-<li><strong>策略更新幅度。</strong> KL 衡量策略分布每次移动的幅度。移动过大时缩小优化步长，变化较小时提高步长。</li>
-</ul>
-<div class="locomotion-equations"><div class="locomotion-formula"><span>KL 学习率更新</span><div class="loss-equation">
+<h3>从机身速度指令到 12 维关节动作</h3>
+<figure class="locomotion-architecture" aria-label="Go2 平地的非对称 Actor–Critic">
+  <div class="transport-diagram">
+    <div class="transport-node"><small>策略输入</small><strong>47 维观测</strong><span>机身角速度、重力投影、速度指令、步态相位、关节位置与速度、上一步动作</span></div>
+    <span class="transport-arrow" aria-hidden="true">→</span>
+    <div class="transport-node transport-actor"><small>Actor · 50 Hz</small><strong>512 → 256 → 128</strong><span>观测归一化 · ELU MLP</span></div>
+    <span class="transport-arrow" aria-hidden="true">→</span>
+    <div class="transport-node"><small>策略输出</small><strong>12 维动作</strong><span>动作乘以 0.25 rad，再叠加默认关节角</span></div>
+  </div>
+  <div class="transport-train">
+    <strong>Critic · 训练时</strong><span>74 维输入 · 增加基座线速度与足端状态（27 维）</span>
+    <span class="train-arrow" aria-hidden="true">→</span><span>标量价值</span>
+    <span class="train-arrow" aria-hidden="true">→</span><span>优势估计与 PPO 更新</span>
+  </div>
+</figure>
+<h3>第 5,000 轮扩大线速度范围</h3>
+<div class="locomotion-course" aria-label="平地速度课程的两个阶段">
+  <div><strong>前 5,000 轮</strong><span>前向 −0.5 ～ 1.0 m/s · 横向 ±0.5 m/s</span></div>
+  <span class="transport-arrow" aria-hidden="true">→</span>
+  <div><strong>后 5,000 轮</strong><span>前向 −1.0 ～ 2.0 m/s · 横向 ±1.0 m/s</span></div>
+</div>
+<figure data-zoom-image="locomotion/flat-overview.png"><a href="assets/locomotion/flat-overview.png"><img src="assets/locomotion/flat-overview.png" width="1900" height="655" loading="lazy" decoding="async" alt="Go2 平地训练的回报与平面速度误差，在约第 5000 轮标出指令范围扩展"></a><figcaption>虚线标出指令范围切换。平均回报在切换前约为 56.0，切换后短期约为 41.6，训练末段回到 46.5。浅线为逐轮记录，深线为每 50 轮中位数。</figcaption></figure>
+<details class="locomotion-details"><summary>速度奖励、步态正则与 KL 学习率</summary>
+  <p>线速度与角速度跟踪各权重 1。接触相位塑造对角步态，脚滑、落地冲击、限位和动作变化率约束执行。</p>
+  <div class="locomotion-equations">
+<div class="locomotion-formula"><span>线速度奖励</span><div class="loss-equation"><math display="block" aria-label="线速度奖励"><mrow><msub><mi>r</mi><mi>v</mi></msub><mo>=</mo><mrow><mi>exp</mi><mo>(</mo><mrow><mo>−</mo><mfrac><mrow><msup><mrow><mo>‖</mo><mrow><msub><mi>v</mi><mi>xy</mi></msub><mo>−</mo><msubsup><mi>v</mi><mi>xy</mi><mtext>cmd</mtext></msubsup></mrow><mo>‖</mo></mrow><mn>2</mn></msup><mo>+</mo><mn>2</mn><msup><msub><mi>v</mi><mi>z</mi></msub><mn>2</mn></msup></mrow><mn>0.25</mn></mfrac></mrow><mo>)</mo></mrow></mrow></math></div></div>
+<div class="locomotion-formula"><span>角速度奖励</span><div class="loss-equation"><math display="block" aria-label="角速度奖励"><mrow><msub><mi>r</mi><mi>ω</mi></msub><mo>=</mo><mrow><mi>exp</mi><mo>(</mo><mrow><mo>−</mo><mfrac><mrow><msup><mrow><mo>(</mo><mrow><msub><mi>ω</mi><mi>z</mi></msub><mo>−</mo><msubsup><mi>ω</mi><mi>z</mi><mtext>cmd</mtext></msubsup></mrow><mo>)</mo></mrow><mn>2</mn></msup><mo>+</mo><mn>0.05</mn><msup><mrow><mo>‖</mo><msub><mi>ω</mi><mi>xy</mi></msub><mo>‖</mo></mrow><mn>2</mn></msup></mrow><mn>0.5</mn></mfrac></mrow><mo>)</mo></mrow></mrow></math></div></div>
+</div>
+  <p>以 0.001 为初始学习率，按小批次的新旧策略分布 KL 调整步长。目标 KL 为 0.01。</p>
+  <div class="locomotion-equations">
+<div class="locomotion-formula"><span>KL 学习率更新</span><div class="loss-equation">
 <math display="block" aria-label="平均 KL 偏大时学习率除以 1.5，偏小时乘以 1.5，其余保持当前值">
 <mrow><msup><mi>η</mi><mo>′</mo></msup><mo>=</mo><mo>{</mo>
 <mtable columnalign="left left" columnspacing="1em" rowspacing=".35em">
 <mtr><mtd><mrow><mi>max</mi><mo>(</mo><mfrac><mi>η</mi><mn>1.5</mn></mfrac><mo>,</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>5</mn></mrow></msup><mo>)</mo></mrow></mtd><mtd><mrow><mi>KL</mi><mo>&gt;</mo><mn>0.02</mn></mrow></mtd></mtr>
 <mtr><mtd><mrow><mi>min</mi><mo>(</mo><mn>1.5</mn><mi>η</mi><mo>,</mo><msup><mn>10</mn><mrow><mo>−</mo><mn>2</mn></mrow></msup><mo>)</mo></mrow></mtd><mtd><mrow><mn>0</mn><mo>&lt;</mo><mi>KL</mi><mo>&lt;</mo><mn>0.005</mn></mrow></mtd></mtr>
 <mtr><mtd><mi>η</mi></mtd><mtd><mtext>其他情况</mtext></mtd></mtr>
-</mtable></mrow></math></div></div></div>
-<figure data-zoom-image="locomotion/adapt-lr.png"><a href="assets/locomotion/adapt-lr.png"><img src="assets/locomotion/adapt-lr.png" width="1520" height="532" loading="lazy" decoding="async" alt="Go2 平地训练的 KL 自适应学习率曲线"></a><figcaption>学习率以对数纵轴表示。虚线标出速度指令范围扩展的迭代。</figcaption></figure>
+</mtable></mrow></math></div></div>
+</div>
+  <figure data-zoom-image="locomotion/adapt-lr.png"><a href="assets/locomotion/adapt-lr.png"><img src="assets/locomotion/adapt-lr.png" width="1520" height="532" loading="lazy" decoding="async" alt="Go2 平地训练的 KL 自适应学习率曲线"></a><figcaption>实际训练学习率。纵轴采用对数刻度，虚线对应速度课程切换。</figcaption></figure>
+  <p>偏航指令全程为 ±1.0 rad/s。速度误差按最长指令步数归一化并在回合内累加。回报低于 −10 的六轮以向下标记表示。</p>
 </details>
 
 <h2 id="rough">Go2 复杂地形运动</h2>
-<p><strong>面对台阶、坡道和起伏地面，如何利用局部地形信息调整落脚？</strong> Actor 同时读取本体状态与地形高度扫描。训练覆盖台阶、坡面、随机起伏和波浪地形，用课程学习调整难度。</p>
-<figure><video width="1600" height="900" controls playsinline preload="none" poster="assets/locomotion/rough.webp?v=13" src="assets/locomotion/rough.mp4?v=13" aria-label="Go2 六厘米台阶地形运动"></video><figcaption>第 5,000 轮策略 · 6 cm 台阶地形 · 前向指令 0.55 m/s。</figcaption></figure>
-<h3>坡面与波浪地形</h3>
-<div class="pair terrain-replays">
-<figure><video width="1600" height="900" controls playsinline preload="none" poster="assets/locomotion/rough-slope.webp" src="assets/locomotion/rough-slope.mp4" aria-label="Go2 坡面运动"></video><figcaption>坡面 · 坡度参数 0.25 · 前向指令 0.55 m/s。</figcaption></figure>
-<figure><video width="1600" height="900" controls playsinline preload="none" poster="assets/locomotion/rough-waves.webp" src="assets/locomotion/rough-waves.mp4" aria-label="Go2 波浪地形运动"></video><figcaption>波浪地形 · 高度幅值 6 cm · 前向指令 0.55 m/s。</figcaption></figure>
+<p>当脚下出现台阶和斜坡，策略如何利用局部高度调整落脚？</p>
+<div class="pair locomotion-evidence">
+<figure><video width="1600" height="900" controls playsinline preload="none" poster="assets/locomotion/rough.webp?v=13" src="assets/locomotion/rough.mp4?v=13" aria-label="Go2 六厘米台阶地形运动"></video><figcaption><strong>6 cm 台阶</strong> · 第 5,000 轮策略 · 前向指令 0.55 m/s。</figcaption></figure>
+<figure data-zoom-image="locomotion/height-scan.png"><a href="assets/locomotion/height-scan.png"><img src="assets/locomotion/height-scan.png" width="972" height="612" loading="lazy" decoding="async" alt="同帧 187 个射线高度值组成的真实网格，台阶在前向出现高度差"></a><figcaption><strong>同段回放第 1.8 秒的高度扫描</strong> · 17 × 11 射线沿机身偏航对齐。颜色为缩放后的相对高度。</figcaption></figure>
 </div>
-<h3>失败案例 · 台阶地形中的回合终止</h3>
-<figure><video width="960" height="540" controls playsinline preload="none" poster="assets/locomotion/rough-terminal.webp" src="assets/locomotion/rough-terminal.mp4" aria-label="Go2 九厘米台阶场景的一次终止前回放"></video><figcaption>同一第 5,000 轮策略 · 9 cm 台阶设置 · 前向指令 0.55 m/s。该次回放在约 7.6 s 触发终止，视频保留自动重置前的片段。</figcaption></figure>
-
-<h3>从射线观测到关节动作</h3>
-<div class="pair height-scan-pair">
-<figure data-zoom-image="locomotion/scan-frame.webp"><a href="assets/locomotion/scan-frame.webp"><img src="assets/locomotion/scan-frame.webp?v=13" width="1600" height="900" loading="lazy" decoding="async" alt="Go2 台阶回放第 1.8 秒的画面"></a><figcaption>6 cm 台阶设置 · 回放第 1.8 秒。</figcaption></figure>
-<figure data-zoom-image="locomotion/height-scan.png"><a href="assets/locomotion/height-scan.png"><img src="assets/locomotion/height-scan.png" width="972" height="612" loading="lazy" decoding="async" alt="同帧 187 个射线高度值组成的真实网格，台阶在前向出现高度差"></a><figcaption>同期 187 个射线读数。横轴为机身前向，颜色为缩放后的高度输入。</figcaption></figure>
+<h3>把地形扫描拼接进 Actor</h3>
+<figure class="locomotion-architecture" aria-label="Go2 地形的非对称 Actor–Critic">
+  <div class="transport-diagram">
+    <div class="transport-node"><small>策略输入</small><strong>234 维观测</strong><span>47 维平地观测 + 187 维地形高度</span></div>
+    <span class="transport-arrow" aria-hidden="true">→</span>
+    <div class="transport-node transport-actor"><small>Actor · 50 Hz</small><strong>512 → 256 → 128</strong><span>观测归一化 · ELU MLP</span></div>
+    <span class="transport-arrow" aria-hidden="true">→</span>
+    <div class="transport-node"><small>策略输出</small><strong>12 维动作</strong><span>输出腿关节偏移，因局部高差调整落脚</span></div>
+  </div>
+  <div class="transport-train">
+    <strong>Critic · 训练时</strong><span>261 维输入 · 保留地形观测，增加基座线速度与足端状态</span>
+    <span class="train-arrow" aria-hidden="true">→</span><span>标量价值</span>
+    <span class="train-arrow" aria-hidden="true">→</span><span>优势估计与 PPO 更新</span>
+  </div>
+</figure>
+<p class="study-source">每条射线取传感器高度减地面命中点高度，再除以 5 m。扫描覆盖前后与左右方向。</p>
+<div class="locomotion-cases">
+<figure><video width="1600" height="900" controls playsinline preload="none" poster="assets/locomotion/rough-slope.webp" src="assets/locomotion/rough-slope.mp4" aria-label="Go2 坡面运动"></video><figcaption><strong>坡面</strong> · 坡度参数 0.25。</figcaption></figure>
+<figure><video width="1600" height="900" controls playsinline preload="none" poster="assets/locomotion/rough-waves.webp" src="assets/locomotion/rough-waves.mp4" aria-label="Go2 波浪地形运动"></video><figcaption><strong>波浪地形</strong> · 高度幅值 6 cm。</figcaption></figure>
+<figure><video width="960" height="540" controls playsinline preload="none" poster="assets/locomotion/rough-terminal.webp" src="assets/locomotion/rough-terminal.mp4" aria-label="Go2 九厘米台阶场景的一次终止前回放"></video><figcaption><strong>9 cm 台阶</strong> · 约 7.6 s 触发回合终止。</figcaption></figure>
 </div>
-<ol class="sensor-flow" aria-label="地形观测进入 Actor 的过程">
-  <li><strong>17 × 11 网格</strong><span>机身偏航对齐，187 条向下射线</span></li>
-  <li><strong>187 维高度</strong><span>传感器高度减地面命中点高度，再除以 5 m</span></li>
-  <li><strong>234 维 Actor 输入</strong><span>与 47 维命令、本体状态及上一步动作拼接</span></li>
-  <li><strong>12 维动作</strong><span>送入 MLP，输出各关节的位置偏移</span></li>
-</ol>
-<figure data-zoom-image="locomotion/rough-overview.png"><a href="assets/locomotion/rough-overview.png"><img src="assets/locomotion/rough-overview.png" width="1900" height="655" loading="lazy" decoding="async" alt="Go2 粗糙地形训练的平均地形等级和回合时长"></a><figcaption>粗糙地形训练 · 每 50 轮中位数与原始轨迹。走过半块地形时升级。未达到期望距离一半且未满足升级条件时降级。</figcaption></figure>
-
-<h3>奖励设计复盘 · 用局部地面定义离地高度</h3>
-<div class="locomotion-equations"><div class="locomotion-formula"><span>世界坐标抬脚代价</span><div class="loss-equation"><math display="block" aria-label="世界坐标抬脚代价"><mrow><mi>c</mi><mo>=</mo><mo>∑</mo><mrow><mo>|</mo><mrow><msubsup><mi>z</mi><mi>foot</mi><mtext>world</mtext></msubsup><mo>−</mo><mn>0.10</mn></mrow><mo>|</mo></mrow><mo>·</mo><mrow><mo>‖</mo><msub><mi>v</mi><mi>foot,xy</mi></msub><mo>‖</mo></mrow></mrow></math></div></div>
-<div class="locomotion-formula"><span>局部离地高度</span><div class="loss-equation"><math display="block" aria-label="局部离地高度"><mrow><msub><mi>h</mi><mi>clear</mi></msub><mo>=</mo><msubsup><mi>z</mi><mi>foot</mi><mtext>world</mtext></msubsup><mo>−</mo><msub><mi>z</mi><mi>ground</mi></msub><mrow><mo>(</mo><mrow><msub><mi>x</mi><mi>foot</mi></msub><mo>,</mo><msub><mi>y</mi><mi>foot</mi></msub></mrow><mo>)</mo></mrow></mrow></math></div></div></div>
+<p class="study-source">三个对照场景使用同一策略和 0.55 m/s 前向指令。</p>
+<h3>抬脚奖励的高度基准</h3>
+<div class="locomotion-equations">
+<div class="locomotion-formula"><span>世界坐标抬脚代价</span><div class="loss-equation"><math display="block" aria-label="世界坐标抬脚代价"><mrow><mi>c</mi><mo>=</mo><mo>∑</mo><mrow><mo>|</mo><mrow><msubsup><mi>z</mi><mi>foot</mi><mtext>world</mtext></msubsup><mo>−</mo><mn>0.10</mn></mrow><mo>|</mo></mrow><mo>·</mo><mrow><mo>‖</mo><msub><mi>v</mi><mi>foot,xy</mi></msub><mo>‖</mo></mrow></mrow></math></div></div>
+<div class="locomotion-formula"><span>局部离地高度</span><div class="loss-equation"><math display="block" aria-label="局部离地高度"><mrow><msub><mi>h</mi><mi>clear</mi></msub><mo>=</mo><msubsup><mi>z</mi><mi>foot</mi><mtext>world</mtext></msubsup><mo>−</mo><msub><mi>z</mi><mi>ground</mi></msub><mrow><mo>(</mo><mrow><msub><mi>x</mi><mi>foot</mi></msub><mo>,</mo><msub><mi>y</mi><mi>foot</mi></msub></mrow><mo>)</mo></mrow></mrow></math></div></div>
+</div>
 <div class="footsteps" aria-label="右前足跨越 6 cm 台阶的三帧仿真">
   <figure data-zoom-image="locomotion/step-fr-90.webp">
     <a href="assets/locomotion/step-fr-90.webp"><img src="assets/locomotion/step-fr-90.webp" width="960" height="592" loading="lazy" decoding="async" alt="Go2 右前足在下一级支撑阶段的实测位置，白点是足端，橙点是正下方地面"></a>
@@ -103,55 +118,76 @@
     </figcaption>
   </figure>
 </div>
-<p class="footstep-note">MuJoCo 台阶回放 · 白点为右前足 site，橙点为其正下方台阶表面。落在上一级时足端世界高度为 24.80 cm，足端 site 与当前地面只差 0.80 cm。</p>
-<ul class="notes">
-<li><strong>台阶改变了世界高度基准。</strong> 世界坐标下的 0.10 m 目标固定不动，右前足踩上更高的台阶时会承担额外的高度偏差。</li>
-<li>改进设计用足下射线估计局部地面，以相对离地高度计算摆动相的抬脚代价，并屏蔽未命中射线。台阶边缘可结合预期落脚点检查，避免只测到当前脚下这一侧。</li>
-<li>验证时固定速度指令、地形与随机种子，用速度误差、绊碰和回合终止次数对照奖励改动。</li>
-</ul>
+
+<p class="footstep-note">右前足落上一级台阶后，世界高度升至 24.80 cm，实际离地间隙降至 0.80 cm。白点为足端 site，橙点为其正下方地面。</p>
+<p>奖励改进方案以足下测得的局部地面为基准，在摆动相计算离地偏差。台阶边缘再检查预期落脚点。</p>
+<h3>按行进距离调整地形难度</h3>
+<figure data-zoom-image="locomotion/rough-overview.png"><a href="assets/locomotion/rough-overview.png"><img src="assets/locomotion/rough-overview.png" width="1900" height="655" loading="lazy" decoding="async" alt="Go2 粗糙地形训练的平均地形等级和回合时长"></a><figcaption>走过半块地形时升级。未达到期望距离一半且未满足升级条件时降级。深线为每 50 轮中位数。</figcaption></figure>
 
 <h2 id="dance">G1 舞蹈动作跟踪</h2>
-<p><strong>如何把全身参考动作变成保持平衡、满足接触约束的机器人运动？</strong> 29 关节 G1 以参考动作作为跟踪目标。策略每 20 ms 读取当前参考和本体状态，再输出一组关节目标偏移。</p>
-<figure><video width="1600" height="900" controls playsinline preload="none" poster="assets/locomotion/dance.webp?v=13" src="assets/locomotion/dance.mp4?v=13" aria-label="G1 舞蹈动作跟踪及参考姿态"></video><figcaption>第 30,000 轮策略 · 回放第 6–20 秒 · 实体 G1 为策略输出，半透明叠影为参考姿态。</figcaption></figure>
-<h3>全局位姿与相对动作分别评分</h3>
-<ul class="notes">
-<li><strong>整体位置和朝向。</strong> 用世界坐标下 torso 锚点的位置误差、旋转角误差约束整体运动，每项权重 0.5，位置和角度尺度分别为 0.3 m 和 0.4 rad。</li>
-<li><strong>肢体构型。</strong> 将参考动作按实际 torso 的水平位置与偏航对齐，保留参考高度，再比较 14 个身体部位的位姿。相对位置和朝向各权重 1.0。对齐后的误差衡量肢体构型，全局项约束整体偏移。</li>
-<li><strong>运动节奏。</strong> 额外跟踪身体部位的世界线速度和角速度，各权重 1.0。动作变化、越限和自碰撞作为正则项。</li>
-</ul>
-<div class="locomotion-equations"><div class="locomotion-formula"><span>全局位置奖励</span><div class="loss-equation"><math display="block" aria-label="全局位置奖励"><mrow><msub><mi>r</mi><mi>root</mi></msub><mo>=</mo><mrow><mi>exp</mi><mo>(</mo><mrow><mo>−</mo><mfrac><msup><mrow><mo>‖</mo><mrow><msub><mi>p</mi><mi>torso</mi></msub><mo>−</mo><msubsup><mi>p</mi><mi>torso</mi><mtext>ref</mtext></msubsup></mrow><mo>‖</mo></mrow><mn>2</mn></msup><msup><mn>0.3</mn><mn>2</mn></msup></mfrac></mrow><mo>)</mo></mrow></mrow></math></div></div>
-<div class="locomotion-formula"><span>相对位置奖励</span><div class="loss-equation"><math display="block" aria-label="相对位置奖励"><mrow><msub><mi>r</mi><mi>body</mi></msub><mo>=</mo><mrow><mi>exp</mi><mo>(</mo><mrow><mo>−</mo><mfrac><mrow><msub><mi>mean</mi><mi>i</mi></msub><msup><mrow><mo>‖</mo><mrow><msub><mi>p</mi><mi>i</mi></msub><mo>−</mo><msubsup><mi>p</mi><mi>i</mi><mtext>aligned ref</mtext></msubsup></mrow><mo>‖</mo></mrow><mn>2</mn></msup></mrow><msup><mn>0.3</mn><mn>2</mn></msup></mfrac></mrow><mo>)</mo></mrow></mrow></math></div></div></div>
-<figure data-zoom-image="locomotion/dance-overview.png"><a href="assets/locomotion/dance-overview.png"><img src="assets/locomotion/dance-overview.png" width="1900" height="655" loading="lazy" decoding="async" alt="G1 舞蹈训练的全局躯干位置误差、相对身体位置误差与回合时长"></a><figcaption>整体位移、局部动作和回合持续时间。深线为每 50 轮中位数。训练末 200 条记录中，全局躯干位置误差均值为 0.80 m，相对身体部位位置误差均值为 0.048 m。两者对应不同对齐方式，早期读数还需结合较短的回合时长。</figcaption></figure>
-<details class="locomotion-details"><summary>展开技术细节 · RSI、自适应采样与参考动作</summary>
-<ul class="notes">
-<li><strong>RSI。</strong> 从采样到的参考帧初始化根部与关节位置、速度，并加入小扰动。策略能从舞蹈中段练起。</li>
-<li><strong>Adaptive sampling。</strong> 按时间段统计训练终止，对失败频率做指数滑动更新，作为采样权重。加上均匀项让其他时间段仍有被采到的机会。</li>
-<li><strong>运动重定向。</strong> 这次训练从已经匹配 G1 关节的参考轨迹开始。项目中的 CSV 转 NPZ 完成时间重采样和正运动学，生成训练使用的关节与身体部位状态。人体到 G1 的映射属于上游动作准备。</li>
-</ul>
+<p>如何让 29 关节 G1 跟上参考动作，同时维持平衡与接触？</p>
+<figure><video width="1600" height="900" controls playsinline preload="none" poster="assets/locomotion/dance.webp?v=13" src="assets/locomotion/dance.mp4?v=13" aria-label="G1 舞蹈动作跟踪及参考姿态"></video><figcaption><strong>第 30,000 轮策略</strong> · 回放第 6–20 秒。实体为策略输出，半透明叠影为参考姿态。</figcaption></figure>
+<h3>参考轨迹如何变成全身关节动作</h3>
+<figure class="locomotion-architecture" aria-label="G1 舞蹈的非对称 Actor–Critic">
+  <div class="transport-diagram">
+    <div class="transport-node"><small>策略输入</small><strong>154 维观测</strong><span>58 维参考关节位置与速度 + 锚点相对朝向、机身角速度、关节状态、上一步动作</span></div>
+    <span class="transport-arrow" aria-hidden="true">→</span>
+    <div class="transport-node transport-actor"><small>Actor · 50 Hz</small><strong>512 → 256 → 128</strong><span>观测归一化 · ELU MLP</span></div>
+    <span class="transport-arrow" aria-hidden="true">→</span>
+    <div class="transport-node"><small>策略输出</small><strong>29 维动作</strong><span>按关节力矩上限与刚度缩放，再叠加默认关节角</span></div>
+  </div>
+  <div class="transport-train">
+    <strong>Critic · 训练时</strong><span>286 维输入 · 增加锚点位置、基座线速度与 14 个身体部位的位姿（132 维）</span>
+    <span class="train-arrow" aria-hidden="true">→</span><span>标量价值</span>
+    <span class="train-arrow" aria-hidden="true">→</span><span>优势估计与 PPO 更新</span>
+  </div>
+</figure>
+<h3>全局位姿与局部构型分别评分</h3>
+<div class="locomotion-distances">
+  <div><strong>0.80 m</strong><span>全局 torso 误差 · 衡量整体位移</span></div>
+  <div><strong>4.8 cm</strong><span>对齐后肢体误差 · 衡量局部动作</span></div>
+</div>
+<figure data-zoom-image="locomotion/dance-overview.png"><a href="assets/locomotion/dance-overview.png"><img src="assets/locomotion/dance-overview.png" width="1900" height="655" loading="lazy" decoding="async" alt="G1 舞蹈训练的全局躯干位置误差、相对身体位置误差与回合时长"></a><figcaption>数值取训练末 200 条记录的均值。相对项按实际 torso 的水平位置和偏航对齐，再比较 14 个部位。深线为每 50 轮中位数。</figcaption></figure>
+<details class="locomotion-details"><summary>位置奖励、RSI、自适应采样与参考动作</summary>
+  <div class="locomotion-equations">
+<div class="locomotion-formula"><span>全局位置奖励</span><div class="loss-equation"><math display="block" aria-label="全局位置奖励"><mrow><msub><mi>r</mi><mi>root</mi></msub><mo>=</mo><mrow><mi>exp</mi><mo>(</mo><mrow><mo>−</mo><mfrac><msup><mrow><mo>‖</mo><mrow><msub><mi>p</mi><mi>torso</mi></msub><mo>−</mo><msubsup><mi>p</mi><mi>torso</mi><mtext>ref</mtext></msubsup></mrow><mo>‖</mo></mrow><mn>2</mn></msup><msup><mn>0.3</mn><mn>2</mn></msup></mfrac></mrow><mo>)</mo></mrow></mrow></math></div></div>
+<div class="locomotion-formula"><span>相对位置奖励</span><div class="loss-equation"><math display="block" aria-label="相对位置奖励"><mrow><msub><mi>r</mi><mi>body</mi></msub><mo>=</mo><mrow><mi>exp</mi><mo>(</mo><mrow><mo>−</mo><mfrac><mrow><msub><mi>mean</mi><mi>i</mi></msub><msup><mrow><mo>‖</mo><mrow><msub><mi>p</mi><mi>i</mi></msub><mo>−</mo><msubsup><mi>p</mi><mi>i</mi><mtext>aligned ref</mtext></msubsup></mrow><mo>‖</mo></mrow><mn>2</mn></msup></mrow><msup><mn>0.3</mn><mn>2</mn></msup></mfrac></mrow><mo>)</mo></mrow></mrow></math></div></div>
+</div>
+  <ul class="notes">
+    <li><strong>评分权重。</strong> 全局位置、朝向各 0.5，相对位置、朝向各 1.0。线速度与角速度跟踪各 1.0。</li>
+    <li><strong>RSI 与自适应采样。</strong> 从参考片段重置机器人。终止较频繁的时段提高采样概率，均匀项保留全段覆盖。</li>
+    <li><strong>参考动作。</strong> 使用已匹配 G1 关节的轨迹。CSV 转 NPZ 负责时间重采样和正运动学，人体动作重定向在上游完成。</li>
+  </ul>
 </details>
 
-<h2 id="training">三项任务的技术定位</h2>
-<p>三项策略共用 PPO 和关节位置控制链路。主要区别在于任务指令、姿态或地形观测，以及评价策略表现的方式。</p>
-<div class="table-scroll" role="region" aria-label="三项任务的技术对照" tabindex="0"><table class="locomotion-comparison">
-<thead><tr><th scope="col">对比维度</th><th scope="col">Go2 平地速度</th><th scope="col">Go2 复杂地形</th><th scope="col">G1 舞蹈跟踪</th></tr></thead>
-<tbody>
-<tr><th scope="row">控制问题</th><td>按期望速度移动并稳定机身</td><td>跟踪速度并适应局部高差</td><td>按参考节奏协调全身动作</td></tr>
-<tr><th scope="row">Actor 输入 → 输出</th><td><strong>47 → 12</strong><br>角速度、重力投影、指令、相位与关节状态</td><td><strong>234 → 12</strong><br>平地观测 + 187 维地形扫描</td><td><strong>154 → 29</strong><br>58 维参考关节状态 + 相对朝向、本体观测</td></tr>
-<tr><th scope="row">Critic 输入 → 输出</th><td><strong>74 → 1</strong><br>额外 27 维基座速度与足端状态</td><td><strong>261 → 1</strong><br>同样额外 27 维，保留高度扫描</td><td><strong>286 → 1</strong><br>额外 132 维锚点位置、机身线速度及 14 个身体部位位姿</td></tr>
-<tr><th scope="row">动作映射</th><td>12 个关节，统一缩放 0.25</td><td>12 个关节，统一缩放 0.25</td><td>29 个关节，按关节配置不同缩放</td></tr>
-<tr><th scope="row">训练难度</th><td>5,000 轮后扩大线速度范围</td><td>按完成距离升降地形等级</td><td>RSI 初始化 + 失败驱动的时间段采样</td></tr>
-<tr><th scope="row">训练与回放证据</th><td>切换前后日志、同指令检查点对照</td><td>地形课程、真实射线输入与落脚案例</td><td>全局与相对误差、参考姿态叠影</td></tr>
-</tbody></table></div>
-
-<h3>共同的控制与训练设计</h3>
-<div class="locomotion-equations"><div class="locomotion-formula"><span>关节位置目标</span><div class="loss-equation"><math display="block" aria-label="关节位置目标"><mrow><msub><mi>q</mi><mi>des</mi></msub><mo>=</mo><msub><mi>q</mi><mi>default</mi></msub><mo>+</mo><mi>s</mi><mo>·</mo><mi>a</mi></mrow></math></div></div><div class="locomotion-formula"><span>G1 逐关节缩放</span><div class="loss-equation"><math display="block" aria-label="G1 逐关节缩放"><mrow><msub><mi>s</mi><mi>j</mi></msub><mo>=</mo><mn>0.25</mn><mo>·</mo><mfrac><msub><mi>τ</mi><mi>max,j</mi></msub><msub><mi>K</mi><mi>p,j</mi></msub></mfrac></mrow></math></div></div></div>
-<ul class="notes">
-<li><strong>非对称 Actor–Critic。</strong> Actor 的输出是动作分布，策略回放用其确定性动作。Critic 用额外的仿真状态估计一个标量价值，帮助计算优势。</li>
-<li><strong>从动作到关节角。</strong> Go2 每单位动作对应 0.25 rad 的目标偏移。G1 的缩放与各执行器的力矩上限和刚度有关，例如膝关节约 0.351 rad、髋俯仰约 0.548 rad。仿真送入执行器时再扣除随机编码器偏置。PD 在 5 ms 物理步内持续跟踪 20 ms 更新一次的目标。</li>
-<li><strong>域随机化。</strong> 启动时随机化足端摩擦、编码器偏置和基座质心，回合中施加速度扰动。Go2 足端摩擦采样为 0.3–1.6，G1 为 0.3–1.2。它们分别覆盖接触条件、测量偏差、质量分布与外部扰动。</li>
-</ul>
+<h2 id="training">三项任务的技术对照</h2>
+<figure class="locomotion-dimensions" aria-label="三种运动策略的输入维度">
+  <div class="dimension-key"><span>Actor 观测</span><span>Critic 额外观测</span></div>
+  <dl>
+    <div><dt>Go2 平地</dt><dd><div class="dimension-track" style="--actor:47;--extra:27" aria-hidden="true"><i></i><i></i></div><span>47 → 74 维</span></dd></div>
+    <div><dt>Go2 地形</dt><dd><div class="dimension-track" style="--actor:234;--extra:27" aria-hidden="true"><i></i><i></i></div><span>234 → 261 维</span></dd></div>
+    <div><dt>G1 舞蹈</dt><dd><div class="dimension-track" style="--actor:154;--extra:132" aria-hidden="true"><i></i><i></i></div><span>154 → 286 维</span></dd></div>
+  </dl>
+  <figcaption>地形任务的高维输入来自 187 条射线。G1 的 Critic 额外读取锚点与身体部位状态。</figcaption>
+</figure>
+<h3>共同控制周期</h3>
+<div class="control-clock" aria-label="策略每 20 毫秒更新，MuJoCo 以 5 毫秒步进">
+  <div class="clock-policy"><strong>50 Hz 策略</strong><span>每 20 ms 更新关节目标</span></div>
+  <ol class="clock-ticks"><li>0–5 ms</li><li>5–10 ms</li><li>10–15 ms</li><li>15–20 ms</li></ol>
+  <div class="clock-physics"><strong>200 Hz 物理</strong><span>Decimation = 4</span></div>
+</div>
+<div class="locomotion-equations">
+<div class="locomotion-formula"><span>关节位置目标</span><div class="loss-equation"><math display="block" aria-label="关节位置目标"><mrow><msub><mi>q</mi><mi>des</mi></msub><mo>=</mo><msub><mi>q</mi><mi>default</mi></msub><mo>+</mo><mi>s</mi><mo>·</mo><mi>a</mi></mrow></math></div></div>
+<div class="locomotion-formula"><span>G1 逐关节缩放</span><div class="loss-equation"><math display="block" aria-label="G1 逐关节缩放"><mrow><msub><mi>s</mi><mi>j</mi></msub><mo>=</mo><mn>0.25</mn><mo>·</mo><mfrac><msub><mi>τ</mi><mi>max,j</mi></msub><msub><mi>K</mi><mi>p,j</mi></msub></mfrac></mrow></math></div></div>
+</div>
+<details class="locomotion-details"><summary>动作映射与域随机化</summary>
+  <ul class="notes">
+    <li><strong>关节目标。</strong> Go2 统一缩放 0.25。G1 逐关节设定缩放，膝关节约 0.351 rad，髋俯仰约 0.548 rad。PD 在每个物理步跟踪目标。</li>
+    <li><strong>域随机化。</strong> 足端摩擦、编码器偏置和基座质心在启动时随机化，回合中加入速度扰动。足端摩擦范围为 Go2 0.3–1.6、G1 0.3–1.2。</li>
+  </ul>
+</details>
 </article>
-<nav class="related" aria-label="其他项目"><a href="ppo.html">PPO 自动驾驶</a><a href="robotics.html">多机器人协同规划</a></nav></main>
+<nav class="related" aria-label="其他项目"><a href="decplm.html">四足协同搬运</a><a href="robotics.html">多机器人协同规划</a></nav></main>
 <footer class="shell mast"><span>Robotics &amp; Autonomous Systems</span><a href="#main">返回顶部 ↑</a></footer>
 <dialog aria-label="科研图放大查看"><form method="dialog"><button>关闭图像 ×</button></form><img alt=""><p></p></dialog>
 </body></html>
