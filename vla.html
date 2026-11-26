@@ -1,14 +1,13 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>UniDriveVLA 自动驾驶复现 | Research Portfolio</title><link rel="stylesheet" href="style.css?v=11"><script src="site.js?v=9" defer></script></head>
+<title>UniDriveVLA 自动驾驶复现 | Research Portfolio</title><link rel="stylesheet" href="style.css?v=14"><script src="site.js?v=9" defer></script></head>
 <body><a class="skip" href="#main">跳到正文</a>
 <header class="shell mast"><a class="brand" href="index.html">Research Portfolio</a><nav class="project-nav" aria-label="项目与源码">
 <a class="nav-project" href="locomotion.html">机器人 RL 运动控制</a>
+<a class="nav-project" href="decplm.html">四足协同搬运</a>
 <div><a href="ppo.html">PPO 自动驾驶</a><a href="https://github.com/5bobo/CASE">GitHub ↗</a></div>
-<div><a href="av2.html">AV2 运动预测</a><a href="https://github.com/5bobo/World-Model-AV2">GitHub ↗</a></div>
 <div><a href="robotics.html">字典序与 MPC</a><a href="robotics.html#repositories">GitHub ↗</a></div>
-<div><a href="vla.html">VLA 复现</a><a href="https://github.com/xiaomi-research/unidrivevla">原项目 ↗</a></div>
-<div><a href="detection.html">景区目标检测</a><a href="https://github.com/5bobo/Scenic-danger-zone-recognition">GitHub ↗</a></div></nav></header><main class="shell" id="main"><a class="back" href="index.html#research">← 研究项目</a><article class="study" id="vla">
+<div><a href="vla.html">VLA 复现</a><a href="https://github.com/xiaomi-research/unidrivevla">原项目 ↗</a></div></nav></header><main class="shell" id="main"><a class="back" href="index.html#research">← 研究项目</a><article class="study" id="vla">
 <header><p class="method">开源项目复现 / Qwen3-VL-2B / CARLA Bench2Drive</p><h1>UniDriveVLA 自动驾驶复现</h1>
 <p>复现小米汽车与华中科技大学开源的 UniDriveVLA，使用官方 Base Stage 3 的 2B 权重，将六路环视图像、场景理解与轨迹规划接入 CARLA 闭环驾驶。</p>
 <a href="https://github.com/xiaomi-research/unidrivevla">原项目源码 ↗</a></header>
@@ -45,7 +44,7 @@
 <h2 id="vla-work">复现中的工程工作</h2>
 <ul class="notes"><li><strong>部署与评测配置：</strong>适配 CARLA 路径、模型权重和单 GPU 评测入口，打通模型到模拟器的运行链路。</li><li><strong>推理与结果分析：</strong>联合检查多视角图像、规划轨迹、BEV 与路线评分，将预测过程与车辆执行对应起来。</li><li><strong>模型适配接口：</strong>在代码中扩展 Action Expert 的 LoRA 配置与 Stage 3 权重键映射，为参数高效适配提供训练入口。</li></ul>
 <p class="experiment-note">原方法与框架图来自 <a href="https://github.com/xiaomi-research/unidrivevla">UniDriveVLA 开源项目</a>（<a href="assets/vla/LICENSE.txt">Apache-2.0</a>）；本页视频、分镜与路线成绩来自我的服务器复现运行。<a href="https://arxiv.org/abs/2604.02190">论文</a> · <a href="https://xiaomi-research.github.io/unidrivevla/">原项目主页</a></p>
-</article><nav class="related" aria-label="其他研究"><a href="robotics.html">多机器人协同规划</a><a href="detection.html">景区目标检测</a></nav></main>
+</article><nav class="related" aria-label="其他研究"><a href="robotics.html">多机器人协同规划</a><a href="decplm.html">四足协同搬运</a></nav></main>
 <footer class="shell mast"><span>Robotics &amp; Autonomous Systems</span><a href="#main">返回顶部 ↑</a></footer>
 <dialog aria-label="科研图放大查看"><form method="dialog"><button>关闭图像 ×</button></form><img alt=""><p></p></dialog>
 </body></html>

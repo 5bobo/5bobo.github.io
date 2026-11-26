@@ -1,14 +1,13 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>机器人强化学习运动控制 | Research Portfolio</title><link rel="stylesheet" href="style.css?v=13"><script src="site.js?v=9" defer></script></head>
+<title>机器人强化学习运动控制 | Research Portfolio</title><link rel="stylesheet" href="style.css?v=14"><script src="site.js?v=9" defer></script></head>
 <body><a class="skip" href="#main">跳到正文</a>
 <header class="shell mast"><a class="brand" href="index.html">Research Portfolio</a><nav class="project-nav" aria-label="项目与源码">
 <a class="nav-project" href="locomotion.html">机器人 RL 运动控制</a>
+<a class="nav-project" href="decplm.html">四足协同搬运</a>
 <div><a href="ppo.html">PPO 自动驾驶</a><a href="https://github.com/5bobo/CASE">GitHub ↗</a></div>
-<div><a href="av2.html">AV2 运动预测</a><a href="https://github.com/5bobo/World-Model-AV2">GitHub ↗</a></div>
 <div><a href="robotics.html">字典序与 MPC</a><a href="robotics.html#repositories">GitHub ↗</a></div>
-<div><a href="vla.html">VLA 复现</a><a href="https://github.com/xiaomi-research/unidrivevla">原项目 ↗</a></div>
-<div><a href="detection.html">景区目标检测</a><a href="https://github.com/5bobo/Scenic-danger-zone-recognition">GitHub ↗</a></div></nav></header><main class="shell" id="main"><a class="back" href="index.html#research">← 研究项目</a>
+<div><a href="vla.html">VLA 复现</a><a href="https://github.com/xiaomi-research/unidrivevla">原项目 ↗</a></div></nav></header><main class="shell" id="main"><a class="back" href="index.html#research">← 研究项目</a>
 <article class="study" id="locomotion">
 <header>
   <p class="method">PPO / MuJoCo / Unitree Go2 &amp; G1</p>
@@ -84,8 +83,29 @@
 <h3>奖励设计复盘 · 用局部地面定义离地高度</h3>
 <div class="locomotion-equations"><div class="locomotion-formula"><span>世界坐标抬脚代价</span><div class="loss-equation"><math display="block" aria-label="世界坐标抬脚代价"><mrow><mi>c</mi><mo>=</mo><mo>∑</mo><mrow><mo>|</mo><mrow><msubsup><mi>z</mi><mi>foot</mi><mtext>world</mtext></msubsup><mo>−</mo><mn>0.10</mn></mrow><mo>|</mo></mrow><mo>·</mo><mrow><mo>‖</mo><msub><mi>v</mi><mi>foot,xy</mi></msub><mo>‖</mo></mrow></mrow></math></div></div>
 <div class="locomotion-formula"><span>局部离地高度</span><div class="loss-equation"><math display="block" aria-label="局部离地高度"><mrow><msub><mi>h</mi><mi>clear</mi></msub><mo>=</mo><msubsup><mi>z</mi><mi>foot</mi><mtext>world</mtext></msubsup><mo>−</mo><msub><mi>z</mi><mi>ground</mi></msub><mrow><mo>(</mo><mrow><msub><mi>x</mi><mi>foot</mi></msub><mo>,</mo><msub><mi>y</mi><mi>foot</mi></msub></mrow><mo>)</mo></mrow></mrow></math></div></div></div>
+<div class="footsteps" aria-label="右前足跨越 6 cm 台阶的三帧仿真">
+  <figure data-zoom-image="locomotion/step-fr-90.webp">
+    <a href="assets/locomotion/step-fr-90.webp"><img src="assets/locomotion/step-fr-90.webp" width="960" height="592" loading="lazy" decoding="async" alt="Go2 右前足在下一级支撑阶段的实测位置，白点是足端，橙点是正下方地面"></a>
+    <figcaption><div class="footstep-label"><strong>下一级支撑</strong><span>1.82 s</span></div>
+      <dl><div><dt>足端世界高度</dt><dd>19.06 cm</dd></div><div><dt>局部地面高度</dt><dd>18.00 cm</dd></div><div><dt>实际离地间隙</dt><dd>1.06 cm</dd></div></dl>
+    </figcaption>
+  </figure>
+  <figure data-zoom-image="locomotion/step-fr-98.webp">
+    <a href="assets/locomotion/step-fr-98.webp"><img src="assets/locomotion/step-fr-98.webp" width="960" height="592" loading="lazy" decoding="async" alt="Go2 右前足在向上一级摆动阶段的实测位置，白点是足端，橙点是正下方地面"></a>
+    <figcaption><div class="footstep-label"><strong>向上一级摆动</strong><span>1.98 s</span></div>
+      <dl><div><dt>足端世界高度</dt><dd>25.70 cm</dd></div><div><dt>局部地面高度</dt><dd>18.00 cm</dd></div><div><dt>实际离地间隙</dt><dd>7.70 cm</dd></div></dl>
+    </figcaption>
+  </figure>
+  <figure data-zoom-image="locomotion/step-fr-105.webp">
+    <a href="assets/locomotion/step-fr-105.webp"><img src="assets/locomotion/step-fr-105.webp" width="960" height="592" loading="lazy" decoding="async" alt="Go2 右前足在上一级落脚阶段的实测位置，白点是足端，橙点是正下方地面"></a>
+    <figcaption><div class="footstep-label"><strong>上一级落脚</strong><span>2.12 s</span></div>
+      <dl><div><dt>足端世界高度</dt><dd>24.80 cm</dd></div><div><dt>局部地面高度</dt><dd>24.00 cm</dd></div><div><dt>实际离地间隙</dt><dd>0.80 cm</dd></div></dl>
+    </figcaption>
+  </figure>
+</div>
+<p class="footstep-note">MuJoCo 台阶回放 · 白点为右前足 site，橙点为其正下方台阶表面。落在上一级时足端世界高度为 24.80 cm，足端 site 与当前地面只差 0.80 cm。</p>
 <ul class="notes">
-<li>现有惩罚将足端世界高度与 0.10 m 比较。在坡面或台阶上，即使脚对局部地面的间隙合适，地面的整体抬高也会改变惩罚。</li>
+<li><strong>台阶改变了世界高度基准。</strong> 世界坐标下的 0.10 m 目标固定不动，右前足踩上更高的台阶时会承担额外的高度偏差。</li>
 <li>改进设计用足下射线估计局部地面，以相对离地高度计算摆动相的抬脚代价，并屏蔽未命中射线。台阶边缘可结合预期落脚点检查，避免只测到当前脚下这一侧。</li>
 <li>验证时固定速度指令、地形与随机种子，用速度误差、绊碰和回合终止次数对照奖励改动。</li>
 </ul>
