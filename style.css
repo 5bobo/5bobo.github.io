@@ -325,12 +325,71 @@ td {font-variant-numeric:tabular-nums}
 @media(max-width:650px) {
   .footsteps,.transport-equations {grid-template-columns:1fr}
 }
-.transport-rewards {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:20px}
-.transport-rewards figure > a {padding:5px}
-.transport-rewards img {width:100%;height:auto;display:block}
-@media(max-width:650px) {
-  .transport-rewards {grid-template-columns:1fr}
-}
 .transport-equations .locomotion-formula:only-child {grid-column:1 / -1}
 #decplm .transport-traces figure[data-zoom-image] > a {aspect-ratio:992/584}
 #decplm .transport-traces figure[data-zoom-image] img {padding:0}
+
+/* Cooperative transport also uses a two-column reading grid for mixed media. */
+#decplm h3 {font-size:clamp(1.18rem,2.3vw,1.55rem);margin:32px 0 10px}
+#decplm figcaption {line-height:1.52}
+.transport-lead {display:grid;grid-template-columns:minmax(0,3fr) minmax(0,1fr);gap:22px;margin-top:18px}
+.transport-lead video {display:block;width:100%;height:auto}
+.transport-lead figcaption,.transport-replays figcaption {display:flex;flex-wrap:wrap;column-gap:12px;row-gap:3px;align-items:baseline}
+.transport-lead figcaption strong,.transport-replays figcaption strong {font-size:.96rem;color:var(--ink)}
+.transport-phases {display:grid;grid-template-rows:repeat(3,minmax(0,1fr));gap:10px;list-style:none;padding:0;margin:0}
+.transport-phases li {display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);align-items:center;gap:10px;border-block-start:1px solid var(--rule);padding-top:10px}
+.transport-phases img {width:100%;height:auto;display:block}
+.transport-phases strong,.transport-phases span {display:block}
+.transport-phases span {color:var(--secondary);font-variant-numeric:tabular-nums;font-size:.82rem}
+#decplm .transport-replays,#decplm .transport-traces {margin-top:14px}
+.transport-diagram {display:grid;grid-template-columns:minmax(0,1.1fr) auto minmax(0,.85fr) auto minmax(0,1.55fr);gap:14px;align-items:center;padding:19px 0;border-block:1px solid var(--rule)}
+.transport-node,.transport-branches > div {padding:14px;background:var(--field)}
+.transport-node > *,.transport-branches > div > * {display:block}
+.transport-node strong,.transport-branches strong {font-size:.98rem;line-height:1.45}
+.transport-node span,.transport-node small,.transport-branches small {font-size:.82rem;line-height:1.55;color:var(--secondary)}
+.transport-node span {margin-top:5px}
+.transport-actor {background:#eaf1f6}
+.transport-arrow {font-size:1.42rem;color:var(--link)}
+.transport-branches {display:grid;gap:7px}
+.transport-train {display:flex;flex-wrap:wrap;gap:5px 12px;align-items:baseline;padding:12px 0;border-bottom:1px dashed var(--rule);font-size:.88rem;color:var(--secondary)}
+.transport-train strong {color:var(--link)}
+.control-clock {display:grid;grid-template-columns:1fr minmax(0,2.5fr) 1fr;gap:18px;align-items:center;margin:15px 0}
+.clock-policy,.clock-physics {font-size:.9rem}
+.clock-physics {text-align:right}
+.control-clock span {display:block;font-size:.83rem;color:var(--secondary)}
+.clock-ticks {padding:0;margin:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));list-style:none;background:#eef3f7;border-block-start:2px solid #5884a3}
+.clock-ticks li {padding:9px 4px;text-align:center;color:var(--link);font-size:.78rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+.clock-ticks li+li {border-inline-start:1px solid white}
+.transport-details {margin-top:15px;border-block:1px solid var(--rule)}
+.transport-details summary {padding:10px 0;color:var(--link);font-size:.93rem;font-weight:600;cursor:pointer}
+.transport-details p {margin:0 0 12px;font-size:.9rem}
+.transport-details .transport-equations {margin:0 0 8px;border-bottom:0}
+.transport-reward-layout {display:grid;grid-template-columns:minmax(0,1.8fr) minmax(0,1fr);gap:24px;align-items:center;margin-top:18px}
+.transport-reward-layout img,.transport-curriculum img {width:100%;height:auto;display:block}
+#decplm .transport-curriculum img {max-height:none}
+.transport-reward-math .locomotion-formula+.locomotion-formula {margin-top:16px}
+.transport-reward-notes,.transport-kl {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;padding:12px 0;margin:16px 0 0;list-style:none;border-block:1px solid var(--rule)}
+.transport-reward-notes li,.transport-kl > div {min-width:0}
+.transport-reward-notes strong,.transport-reward-notes span,.transport-kl dd span {display:block}
+.transport-reward-notes span,.transport-kl dd span {font-size:.87rem;color:var(--secondary);margin-top:4px}
+.transport-kl dt {font-size:.85rem;color:var(--secondary);font-variant-numeric:tabular-nums}
+.transport-kl dd {margin:4px 0 0}
+.transport-kl dd strong {font-size:1.26rem;color:var(--link)}
+@media(max-width:820px) {
+  .transport-lead {grid-template-columns:1fr}
+  .transport-phases {grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:auto}
+}
+@media(max-width:650px) {
+  .transport-phases li {grid-template-columns:1fr;gap:5px}
+  .transport-diagram,.transport-reward-layout {grid-template-columns:minmax(0,1fr);gap:10px}
+  .transport-arrow {transform:rotate(90deg);justify-self:center;line-height:1}
+  .transport-branches > div {padding:10px 14px}
+  .control-clock {grid-template-columns:1fr 1fr;gap:8px 10px}
+  .clock-ticks {grid-column:1 / -1;grid-row:2}
+  .transport-reward-notes,.transport-kl {gap:10px}
+  .transport-reward-notes strong,.transport-kl dt {font-size:.84rem}
+  .transport-reward-notes span,.transport-kl dd span {font-size:.77rem}
+}
+@media(max-width:450px) {
+  #decplm .loss-equation {font-size:clamp(.86rem,4.25vw,1.08rem)}
+}

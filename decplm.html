@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>四足机器人协同夹持与搬运 | Research Portfolio</title><link rel="stylesheet" href="style.css?v=14"><script src="site.js?v=9" defer></script></head>
+<title>四足机器人协同夹持与搬运 | Research Portfolio</title><link rel="stylesheet" href="style.css?v=15"><script src="site.js?v=10" defer></script></head>
 <body><a class="skip" href="#main">跳到正文</a>
 <header class="shell mast"><a class="brand" href="index.html">Research Portfolio</a><nav class="project-nav" aria-label="项目与源码">
 <a class="nav-project" href="locomotion.html">机器人 RL 运动控制</a>
@@ -8,99 +8,125 @@
 <div><a href="ppo.html">PPO 自动驾驶</a><a href="https://github.com/5bobo/CASE">GitHub ↗</a></div>
 <div><a href="robotics.html">字典序与 MPC</a><a href="robotics.html#repositories">GitHub ↗</a></div>
 <div><a href="vla.html">VLA 复现</a><a href="https://github.com/xiaomi-research/unidrivevla">原项目 ↗</a></div></nav></header><main class="shell" id="main"><a class="back" href="index.html#research">← 研究项目</a>
+
 <article class="study" id="decplm">
 <header>
   <p class="method">Multi-agent PPO / CTDE / Isaac Lab</p>
   <h1>四足机器人协同夹持与搬运</h1>
-  <p>多台 Go2 + D1 怎样在各自做决策的情况下，用机械臂末端夹住同一件物体，并同步抬升与移动？</p>
+  <p>如何让各自决策的 Go2 + D1 同步夹住、抬起并搬运同一件物体？</p>
 </header>
-<nav class="chapter" aria-label="本页目录"><a href="#replays">仿真回放</a><a href="#control">策略与控制</a><a href="#reward">奖励设计</a><a href="#curriculum">课程训练</a></nav>
+<nav class="chapter" aria-label="本页目录">
+  <a href="#replays">仿真回放</a><a href="#control">策略与控制</a><a href="#reward">关键点奖励</a><a href="#curriculum">课程训练</a>
+</nav>
 
-<h2 id="replays">同一套策略，从双机到六机</h2>
-<p>载荷的目标指令包含平面速度、偏航角速度与抬升高度。机器人根据各自的本体状态和分配到的接触位姿调整底盘与机械臂，协同发生在共同载荷上。</p>
-<figure><video width="1600" height="900" controls playsinline preload="none" poster="assets/decplm/box-2.webp" src="assets/decplm/box-2.mp4" aria-label="两台 Go2 加 D1 依次夹持、抬升并移动箱体"></video><figcaption>双机箱体 · 0–4 s 建立接触，4 s 给出抬升指令，7 s 加入前向速度指令。随后 6 s 内载荷前向位移约 0.86 m。</figcaption></figure>
-<div class="pair transport-replays">
-  <figure><video width="1600" height="900" controls playsinline preload="none" poster="assets/decplm/box-3.webp" src="assets/decplm/box-3.mp4" aria-label="三台 Go2 加 D1 以非对称站位搬运箱体"></video><figcaption><strong>三机箱体。</strong> 非对称接触布局下，移动阶段前进约 1.09 m，同时产生约 0.54 m 的横向偏移。</figcaption></figure>
-  <figure><video width="1600" height="900" controls playsinline preload="none" poster="assets/decplm/box-4.webp" src="assets/decplm/box-4.mp4" aria-label="四台 Go2 加 D1 从四侧协同搬运箱体"></video><figcaption><strong>四机箱体。</strong> 四侧布置接触点，开始平移后 6 s 内载荷前向位移约 0.89 m。</figcaption></figure>
-</div>
-<div class="pair transport-replays">
-  <figure><video width="1600" height="900" controls playsinline preload="none" poster="assets/decplm/box-6.webp" src="assets/decplm/box-6.mp4" aria-label="六台 Go2 加 D1 协同抬升并移动长箱"></video><figcaption><strong>六机长箱。</strong> 给长边增加接触点，移动阶段 6 s 内前进约 1.16 m，箱体持续保持在约 13 cm 的抬升高度。</figcaption></figure>
-  <figure><video width="1600" height="900" controls playsinline preload="none" poster="assets/decplm/couch-4.webp" src="assets/decplm/couch-4.mp4" aria-label="四台 Go2 加 D1 尝试夹持抬升沙发，沙发移动后重新接地"></video><figcaption><strong>四机沙发。</strong> 将接触点布置到异形载荷四侧。沙发先抬升再移动，后段重新接地，前向位移约 0.31 m。</figcaption></figure>
-</div>
-<h3>相同指令下的载荷运动</h3>
-<div class="pair transport-traces">
-  <figure data-zoom-image="decplm/replay-lift.png"><a href="assets/decplm/replay-lift.png"><img src="assets/decplm/replay-lift.png" width="992" height="584" loading="lazy" decoding="async" alt="各载荷从回放首帧算起的根部抬升量，六机长箱在移动时保持约 13 厘米"></a><figcaption>载荷根部高度相对初始值的变化。阴影为 4–7 s 的独立抬升阶段。抬升目标为 0.14 m，7 s 后叠加移动指令。</figcaption></figure>
-  <figure data-zoom-image="decplm/replay-move.png"><a href="assets/decplm/replay-move.png"><img src="assets/decplm/replay-move.png" width="992" height="584" loading="lazy" decoding="async" alt="各场景自开始移动后的前向位移与速度指令参考线"></a><figcaption>从移动指令发出时重新计位移。灰虚线为按 0.19 m/s 恒速移动的参考位移。</figcaption></figure>
-</div>
-<p class="study-source"><strong>论文实验。</strong> 原文在 2–10 台机器人的箱体搬运中对照了关键点奖励和接触帧可用性。关键点奖励在不同编队规模下均降低了速度跟踪误差和落箱率。<a href="https://arxiv.org/html/2509.14342#S6">论文第 VI 节 ↗</a></p>
-
-<h2 id="control">局部观测、共享策略、分层执行</h2>
-<ol class="sensor-flow transport-flow" aria-label="单台机器人的策略与执行数据流">
-  <li><strong>52 维局部观测</strong><span>本体状态、载荷指令、相对接触位姿和上一步动作</span></li>
-  <li><strong>共享 Actor</strong><span>128 × 128 MLP，每台机器人独立运行一份</span></li>
-  <li><strong>9 维高层动作</strong><span>3 维机身速度指令 + 6 维 D1 关节位置偏移</span></li>
-  <li><strong>关节位置控制</strong><span>Go2 速度策略生成 12 维腿部目标，D1 接收 6 维关节目标</span></li>
+<h2 id="replays">同一策略，搬运不同载荷</h2>
+<div class="transport-lead">
+<figure>
+  <video width="1600" height="900" controls playsinline preload="none" poster="assets/decplm/box-6.webp" src="assets/decplm/box-6.mp4" aria-label="六台 Go2 + D1 依次夹持、抬升和移动长箱"></video>
+  <figcaption><strong>六机 · 长箱</strong><span>移动 6 s · 前进 1.16 m · 抬升约 13 cm</span></figcaption>
+</figure>
+<ol class="transport-phases" aria-label="同一段六机回放的三个阶段">
+  <li><img src="assets/decplm/stage-pinch.webp" width="640" height="360" loading="lazy" alt="六台 Go2 的末端接触长箱侧壁"><div><strong>夹持</strong><span>0–4 s</span></div></li>
+  <li><img src="assets/decplm/stage-lift.webp" width="640" height="360" loading="lazy" alt="六台 Go2 将长箱抬离地面"><div><strong>抬升</strong><span>4–7 s</span></div></li>
+  <li><img src="assets/decplm/stage-move.webp" width="640" height="360" loading="lazy" alt="六台 Go2 保持夹持并向前搬运长箱"><div><strong>移动</strong><span>7 s 起</span></div></li>
 </ol>
-<div class="table-scroll" tabindex="0" role="region" aria-label="双机 Actor 与 Critic 对比">
-<table><thead><tr><th scope="col">网络</th><th scope="col">输入</th><th scope="col">输出与用途</th></tr></thead>
-<tbody><tr><th scope="row">共享 Actor · 52 维</th><td>本机的关节位置、机身角速度和投影重力、接触帧相对位姿、载荷指令与动作历史等</td><td>9 维动作均值。执行时每台机器人使用相同参数，输入维度与队伍规模无关。</td></tr>
-<tr><th scope="row">集中 Critic · 104 维</th><td>双机训练时，将本机与另一台机器人的 Critic 观测拼接为 52 × 2 维</td><td>估计当前机器人的价值，为 PPO 提供优势估计。集中信息在训练中使用。</td></tr></tbody></table>
+</div>
+<h3>队伍规模与接触布局</h3>
+<div class="pair transport-replays">
+<figure>
+  <video width="1600" height="900" controls playsinline preload="none" poster="assets/decplm/box-2.webp" src="assets/decplm/box-2.mp4" aria-label="两台 Go2 + D1 相对夹持搬运箱体"></video>
+  <figcaption><strong>双机 · 箱体</strong><span>相对夹持 · 前进 0.86 m</span></figcaption>
+</figure>
+<figure>
+  <video width="1600" height="900" controls playsinline preload="none" poster="assets/decplm/box-3.webp" src="assets/decplm/box-3.mp4" aria-label="三台 Go2 + D1 以非对称站位搬运箱体"></video>
+  <figcaption><strong>三机 · 箱体</strong><span>非对称站位 · 前进 1.09 m · 横移 0.54 m</span></figcaption>
+</figure>
+<figure>
+  <video width="1600" height="900" controls playsinline preload="none" poster="assets/decplm/box-4.webp" src="assets/decplm/box-4.mp4" aria-label="四台 Go2 + D1 从四侧协同抬升搬运箱体"></video>
+  <figcaption><strong>四机 · 箱体</strong><span>四侧夹持 · 前进 0.89 m</span></figcaption>
+</figure>
+<figure>
+  <video width="1600" height="900" controls playsinline preload="none" poster="assets/decplm/couch-4.webp" src="assets/decplm/couch-4.mp4" aria-label="四台 Go2 + D1 抬升并推动沙发，后段重新接地"></video>
+  <figcaption><strong>四机 · 沙发</strong><span>异形载荷 · 前进 0.31 m · 后段接地</span></figcaption>
+</figure>
+</div>
+<h3>抬升高度和前向位移</h3>
+<div class="pair transport-traces">
+<figure data-zoom-image="decplm/replay-lift.png">
+  <a href="assets/decplm/replay-lift.png"><img src="assets/decplm/replay-lift.png" width="992" height="584" loading="lazy" decoding="async" alt="五个场景的载荷根部抬升量，六机长箱移动时约保持 13 cm"></a>
+  <figcaption>根部高度相对首帧的变化。阴影为独立抬升阶段。</figcaption>
+</figure>
+<figure data-zoom-image="decplm/replay-move.png">
+  <a href="assets/decplm/replay-move.png"><img src="assets/decplm/replay-move.png" width="992" height="584" loading="lazy" decoding="async" alt="五个场景在移动阶段的前向位移，灰色虚线为恒速参考值"></a>
+  <figcaption>从移动指令发出时计位移。灰虚线是 0.19 m/s 参考。</figcaption>
+</figure>
 </div>
 
-<h3>200 Hz 物理步进与 50 Hz 策略决策</h3>
-<div class="locomotion-equations transport-equations">
-  <div class="locomotion-formula"><span>Go2 腿部关节目标</span><div class="loss-equation"><math display="block" aria-label="腿部关节目标等于默认角度加零点二五倍低层策略输出"><mrow><msubsup><mi>q</mi><mtext>leg</mtext><mo>∗</mo></msubsup><mo>=</mo><msubsup><mi>q</mi><mtext>leg</mtext><mn>0</mn></msubsup><mo>+</mo><mn>0.25</mn><msub><mi>a</mi><mtext>leg</mtext></msub></mrow></math></div></div>
-  <div class="locomotion-formula"><span>D1 机械臂关节目标</span><div class="loss-equation"><math display="block" aria-label="机械臂关节目标等于默认角度加零点五倍机械臂动作后裁剪"><mrow><msubsup><mi>q</mi><mtext>arm</mtext><mo>∗</mo></msubsup><mo>=</mo><mi>clip</mi><mo>(</mo><msubsup><mi>q</mi><mtext>arm</mtext><mn>0</mn></msubsup><mo>+</mo><mn>0.5</mn><msub><mi>a</mi><mtext>arm</mtext></msub><mo>)</mo></mrow></math></div></div>
+<h2 id="control">共享 Actor，分层控制腿和臂</h2>
+<figure class="transport-architecture" aria-label="去中心化执行与集中训练">
+  <div class="transport-diagram">
+    <div class="transport-node"><small>单机输入</small><strong>52 维局部观测</strong><span>本体状态、接触位姿、载荷指令、上一步动作</span></div>
+    <span class="transport-arrow" aria-hidden="true">→</span>
+    <div class="transport-node transport-actor"><small>每台独立运行</small><strong>共享 Actor</strong><span>128 × 128 MLP · 9 维动作</span></div>
+    <span class="transport-arrow" aria-hidden="true">→</span>
+    <div class="transport-branches">
+      <div><small>3 维机身速度</small><strong>Go2 速度策略 → 12 个腿关节目标</strong></div>
+      <div><small>6 维关节偏移</small><strong>D1 缩放与限幅 → 6 个臂关节目标</strong></div>
+    </div>
+  </div>
+  <div class="transport-train"><strong>CTDE · 训练时</strong><span>双机观测拼接 · 104 维</span><span class="train-arrow" aria-hidden="true">→</span><span>集中 Critic · 估计价值</span><span class="train-arrow" aria-hidden="true">→</span><span>PPO 更新 Actor</span></div>
+  <figcaption>各自感知、各自动作。改变队伍规模时，重新布置接触点并复用 Actor。</figcaption>
+</figure>
+<h3>一个策略周期，四个物理步</h3>
+<div class="control-clock" aria-label="50 赫兹策略对应 200 赫兹物理，每 20 毫秒四个物理步">
+  <div class="clock-policy"><strong>50 Hz 策略</strong><span>每 20 ms 更新关节目标</span></div>
+  <ol class="clock-ticks"><li>0–5 ms</li><li>5–10 ms</li><li>10–15 ms</li><li>15–20 ms</li></ol>
+  <div class="clock-physics"><strong>200 Hz 物理</strong><span>Decimation = 4</span></div>
 </div>
-<ul class="notes">
-  <li><strong>Decimation = 4。</strong> 物理每 5 ms 更新，4 个物理步执行一次高层策略。腿部速度策略每 4 个物理步推理一次，关节目标由物理步内的位置控制跟踪。</li>
-  <li><strong>底盘与机械臂分通道。</strong> 底盘动作经过命令限幅和死区后送入 Go2 速度策略，腿关节目标在默认姿态上叠加 0.25 倍输出。D1 在默认关节姿态上叠加 0.5 倍输出，再按关节限位裁剪。</li>
-  <li><strong>接触帧随载荷运动。</strong> 接触点和法向定义在载荷坐标系中，再转为各自机身坐标系下的观测。机器人数量或载荷几何改变时，可以重布接触点并复用策略。</li>
+<details class="transport-details">
+  <summary>关节目标与动作缩放</summary>
+  <div class="locomotion-equations transport-equations"><div class="locomotion-formula"><span>Go2 腿部</span><div class="loss-equation"><math display="block" aria-label="腿部关节目标等于默认角度加零点二五倍低层策略输出"><mrow><msubsup><mi>q</mi><mtext>leg</mtext><mo>∗</mo></msubsup><mo>=</mo><msubsup><mi>q</mi><mtext>leg</mtext><mn>0</mn></msubsup><mo>+</mo><mn>0.25</mn><msub><mi>a</mi><mtext>leg</mtext></msub></mrow></math></div></div><div class="locomotion-formula"><span>D1 机械臂</span><div class="loss-equation"><math display="block" aria-label="机械臂关节目标等于默认角度加零点五倍机械臂动作后裁剪"><mrow><msubsup><mi>q</mi><mtext>arm</mtext><mo>∗</mo></msubsup><mo>=</mo><mi>clip</mi><mo>(</mo><msubsup><mi>q</mi><mtext>arm</mtext><mn>0</mn></msubsup><mo>+</mo><mn>0.5</mn><msub><mi>a</mi><mtext>arm</mtext></msub><mo>)</mo></mrow></math></div></div></div>
+  <p>机身速度指令先限幅并过死区。底层 Go2 策略与高层 Actor 均为 50 Hz。</p>
+</details>
+
+<h2 id="reward">用关键点同时约束位置与朝向</h2>
+<div class="transport-reward-layout">
+<figure data-zoom-image="decplm/keypoint-alignment.png">
+  <a href="assets/decplm/keypoint-alignment.png"><img src="assets/decplm/keypoint-alignment.png" width="1512" height="558" loading="lazy" decoding="async" alt="末端五个共线点与机身三个非共线点，虚线连接对应的机器人点和载荷目标点"></a>
+  <figcaption>几何示意。虚线越短，接触位置与朝向越接近目标。</figcaption>
+</figure>
+  <div class="transport-reward-math">
+    <div class="locomotion-formula"><span>对应点的均方距离</span><div class="loss-equation"><math display="block" aria-label="关键点距离等于对应点欧氏距离平方的均值"><mrow><msub><mi>d</mi><mi>con</mi></msub><mo>(</mo><mi>P</mi><mo>,</mo><msup><mi>P</mi><mo>∗</mo></msup><mo>)</mo><mo>=</mo><mfrac><mn>1</mn><mi>K</mi></mfrac><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></munderover><msubsup><mrow><mo>‖</mo><msub><mi>p</mi><mi>j</mi></msub><mo>−</mo><msubsup><mi>p</mi><mi>j</mi><mo>∗</mo></msubsup><mo>‖</mo></mrow><mn>2</mn><mn>2</mn></msubsup></mrow></math></div></div>
+    <div class="locomotion-formula"><span>合并末端与机身奖励</span><div class="loss-equation"><math display="block" aria-label="关键点奖励为末端和底盘关键点距离的负和"><mrow><msub><mi>r</mi><mi>con</mi></msub><mo>=</mo><mo>−</mo><msub><mi>d</mi><mi>pad</mi></msub><mo>−</mo><msub><mi>d</mi><mi>base</mi></msub></mrow></math></div></div>
+  </div>
+</div>
+<ul class="transport-reward-notes">
+  <li><strong>末端 5 点</strong><span>贴合接触位置与表面法向。</span></li>
+  <li><strong>机身 3 点</strong><span>保持底盘与载荷的相对位姿。</span></li>
+  <li><strong>阶段目标</strong><span>随课程加入高度与速度跟踪。</span></li>
 </ul>
 
-<h2 id="reward">关键点奖励把位置与朝向放在同一尺度</h2>
-<div class="locomotion-equations transport-equations">
-  <div class="locomotion-formula"><span>匹配关键点的均方距离</span>
-    <div class="loss-equation"><math display="block" aria-label="关键点距离等于对应点欧氏距离平方的均值"><mrow><msub><mi>d</mi><mi>con</mi></msub><mo>(</mo><mi>P</mi><mo>,</mo><msup><mi>P</mi><mo>∗</mo></msup><mo>)</mo><mo>=</mo><mfrac><mn>1</mn><mi>K</mi></mfrac><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>K</mi></munderover><msubsup><mrow><mo>‖</mo><msub><mi>p</mi><mi>j</mi></msub><mo>−</mo><msubsup><mi>p</mi><mi>j</mi><mo>∗</mo></msubsup><mo>‖</mo></mrow><mn>2</mn><mn>2</mn></msubsup></mrow></math></div>
-  </div>
-  <div class="locomotion-formula"><span>末端接触与底盘跟随</span>
-    <div class="loss-equation"><math display="block" aria-label="关键点奖励为末端和底盘关键点距离的负和"><mrow><msub><mi>r</mi><mi>con</mi></msub><mo>=</mo><mo>−</mo><msub><mi>d</mi><mi>pad</mi></msub><mo>−</mo><msub><mi>d</mi><mi>base</mi></msub></mrow></math></div>
-  </div>
-</div>
-<ul class="notes">
-  <li><strong>末端接触。</strong> 用沿接触垫法向排列的 5 个点对齐物体接触帧。位置或法向偏差都会增大距离，同时保留绕法向旋转的自由度。</li>
-  <li><strong>机身跟随。</strong> 用 3 个非共线点约束底盘与载荷运动指令的几何关系，使速度跟踪与接触维持协同。</li>
-  <li><strong>阶段奖励和约束。</strong> 接触阶段奖励贴合，抬升阶段加入载荷高度跟踪，移动阶段加入速度跟踪。动作变化、关节运动、载荷倾斜与偏离接触区域作为约束信号。</li>
-</ul>
-
-<h2 id="curriculum">接触、抬升、移动的三阶段课程</h2>
-<p>训练在阶段之间接续检查点。先学末端贴合，再引入载荷高度指令，最后加入平面与偏航速度指令。完整课程包含 500、1,000 和 6,000 轮更新。</p>
-<div class="transport-rewards" aria-label="三阶段课程的平均回合奖励">
-  <figure data-zoom-image="decplm/reward-pinch.png"><a href="assets/decplm/reward-pinch.png"><img src="assets/decplm/reward-pinch.png" width="736" height="547" loading="lazy" decoding="async" alt="Pinch 建立接触阶段的平均回合奖励曲线"></a><figcaption>500 轮 · 末段奖励中位数 16.67</figcaption></figure>
-  <figure data-zoom-image="decplm/reward-lift.png"><a href="assets/decplm/reward-lift.png"><img src="assets/decplm/reward-lift.png" width="736" height="547" loading="lazy" decoding="async" alt="Lift 抬升阶段的平均回合奖励曲线"></a><figcaption>1,000 轮 · 末段奖励中位数 58.41</figcaption></figure>
-  <figure data-zoom-image="decplm/reward-move.png"><a href="assets/decplm/reward-move.png"><img src="assets/decplm/reward-move.png" width="736" height="547" loading="lazy" decoding="async" alt="Move 移动阶段的平均回合奖励曲线"></a><figcaption>6,000 轮 · 末段奖励中位数 64.77</figcaption></figure>
-</div>
-<p class="study-source">浅线是逐轮平均回合奖励，深线是分段中位数。Pinch 每 25 轮统计，Lift 和 Move 每 50 轮统计。每个阶段使用各自的奖励设置与纵轴。</p>
-<ul class="notes">
-  <li><strong>Pinch。</strong> 平稳建立接触，阶段末段奖励中位数为 16.67。</li>
-  <li><strong>Lift。</strong> 从上一阶段检查点加入抬升目标，阶段末段奖励中位数为 58.41。</li>
-  <li><strong>Move。</strong> 加入水平移动与转向，约第 3,000 轮后进入较高奖励区间，末段奖励中位数为 64.77。</li>
-</ul>
-
-<h3>PPO 用 KL 散度调节学习率</h3>
-<p>每个小批次比较更新前后对角高斯策略的 <math aria-label="旧策略到新策略的 KL 散度"><mrow><msub><mi>D</mi><mtext>KL</mtext></msub><mo>(</mo><msub><mi>π</mi><mtext>old</mtext></msub><mo>‖</mo><msub><mi>π</mi><mtext>new</mtext></msub><mo>)</mo></mrow></math> 均值。KL 先沿动作维求和，再对小批次取平均。目标为 0.01。</p>
-<div class="locomotion-equations transport-equations">
-  <div class="locomotion-formula"><span>每个动作维度的高斯 KL 项</span>
-  <div class="loss-equation"><math display="block" aria-label="每维 KL 为新旧标准差之比的对数加上旧方差与均值差平方之和除以两倍新方差再减去二分之一"><mrow><mi>log</mi><mo>(</mo><mfrac><msub><mi>σ</mi><mtext>new</mtext></msub><msub><mi>σ</mi><mtext>old</mtext></msub></mfrac><mo>)</mo><mo>+</mo><mfrac><mrow><msubsup><mi>σ</mi><mtext>old</mtext><mn>2</mn></msubsup><mo>+</mo><msup><mrow><mo>(</mo><msub><mi>μ</mi><mtext>old</mtext></msub><mo>−</mo><msub><mi>μ</mi><mtext>new</mtext></msub><mo>)</mo></mrow><mn>2</mn></msup></mrow><mrow><mn>2</mn><msubsup><mi>σ</mi><mtext>new</mtext><mn>2</mn></msubsup></mrow></mfrac><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></math></div>
-  </div>
-</div>
-<div class="table-scroll" tabindex="0" role="region" aria-label="KL 自适应学习率规则">
-<table><thead><tr><th scope="col">小批次平均 KL</th><th scope="col">学习率更新</th><th scope="col">作用</th></tr></thead>
-<tbody><tr><th scope="row">大于 0.02</th><td>除以 1.5，下限 10<sup>−5</sup></td><td>缩小后续步幅</td></tr>
-<tr><th scope="row">大于 0 且小于 0.005</th><td>乘以 1.5，上限 10<sup>−2</sup></td><td>提高后续更新幅度</td></tr>
-<tr><th scope="row">其余情况</th><td>沿用当前学习率</td><td>维持当前更新节奏</td></tr></tbody></table>
-</div>
-<p class="study-source">方法参考 Pandit、Shrestha 与 Fern，ICRA 2026。<a href="https://arxiv.org/abs/2509.14342">论文 ↗</a></p>
+<h2 id="curriculum">三阶段课程训练</h2>
+<p>从夹持到搬运，各阶段接续上一阶段的检查点。</p>
+<figure class="transport-curriculum" data-zoom-image="decplm/curriculum-reward.png">
+  <a href="assets/decplm/curriculum-reward.png"><picture>
+    <source media="(max-width:650px)" srcset="assets/decplm/curriculum-stacked.png" width="896" height="1400">
+    <img src="assets/decplm/curriculum-reward.png" width="2000" height="616" loading="lazy" decoding="async" alt="累计 0 到 7500 轮的三阶段奖励图，第 500 轮切换到 Lift，第 1500 轮切换到 Move，每段使用独立纵轴">
+  </picture></a>
+  <figcaption>第 500、1,500 轮切换阶段。浅线是逐轮平均奖励，深线是分段中位数。各阶段采用独立纵轴。</figcaption>
+</figure>
+<h3>KL 调节 PPO 学习率</h3>
+<p>目标 KL 为 0.01。按小批次平均 KL 改变更新步幅。</p>
+<dl class="transport-kl">
+  <div><dt>0 &lt; KL &lt; 0.005</dt><dd><strong>× 1.5</strong><span>增大学习率 · 上限 10<sup>−2</sup></span></dd></div>
+  <div><dt>0.005 ≤ KL ≤ 0.02</dt><dd><strong>保持</strong><span>沿用当前学习率</span></dd></div>
+  <div><dt>KL &gt; 0.02</dt><dd><strong>÷ 1.5</strong><span>减小学习率 · 下限 10<sup>−5</sup></span></dd></div>
+</dl>
+<details class="transport-details">
+  <summary>对角高斯 KL 计算</summary>
+  <div class="locomotion-equations transport-equations"><div class="locomotion-formula"><span>每个动作维度的 KL 项</span><div class="loss-equation"><math display="block" aria-label="每维 KL 为新旧标准差之比的对数加上旧方差与均值差平方之和除以两倍新方差再减去二分之一"><mrow><mi>log</mi><mo>(</mo><mfrac><msub><mi>σ</mi><mtext>new</mtext></msub><msub><mi>σ</mi><mtext>old</mtext></msub></mfrac><mo>)</mo><mo>+</mo><mfrac><mrow><msubsup><mi>σ</mi><mtext>old</mtext><mn>2</mn></msubsup><mo>+</mo><msup><mrow><mo>(</mo><msub><mi>μ</mi><mtext>old</mtext></msub><mo>−</mo><msub><mi>μ</mi><mtext>new</mtext></msub><mo>)</mo></mrow><mn>2</mn></msup></mrow><mrow><mn>2</mn><msubsup><mi>σ</mi><mtext>new</mtext><mn>2</mn></msubsup></mrow></mfrac><mo>−</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></mrow></math></div></div></div>
+  <p>比较 <math aria-label="旧策略到新策略的 KL 散度"><mrow><msub><mi>D</mi><mtext>KL</mtext></msub><mo>(</mo><msub><mi>π</mi><mtext>old</mtext></msub><mo>‖</mo><msub><mi>π</mi><mtext>new</mtext></msub><mo>)</mo></mrow></math>。逐维求和后对小批次取平均。KL 为零时沿用当前学习率。</p>
+</details>
 </article>
 <nav class="related" aria-label="其他研究"><a href="locomotion.html">机器人强化学习运动控制</a><a href="robotics.html#mpc">MPC 协同搬运</a></nav>
 </main>

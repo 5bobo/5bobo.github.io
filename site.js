@@ -12,7 +12,7 @@ for (const figure of document.querySelectorAll('[data-zoom-image]')) {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
     opener = link;
-    enlarged.src = link.href;
+    enlarged.src = picture.closest('picture') ? picture.currentSrc : link.href;
     enlarged.alt = picture.alt;
     description.textContent = caption;
     viewer.showModal();
