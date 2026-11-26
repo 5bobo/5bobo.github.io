@@ -46,18 +46,18 @@
   <figcaption><strong>四机 · 箱体</strong><span>四侧夹持 · 前进 0.89 m</span></figcaption>
 </figure>
 <figure>
-  <video width="1600" height="900" controls playsinline preload="none" poster="assets/decplm/couch-4.webp" src="assets/decplm/couch-4.mp4" aria-label="四台 Go2 + D1 抬升并推动沙发，后段重新接地"></video>
-  <figcaption><strong>四机 · 沙发</strong><span>异形载荷 · 前进 0.31 m · 后段接地</span></figcaption>
+  <video width="1600" height="900" controls playsinline preload="none" poster="assets/decplm/barrel-4.webp" src="assets/decplm/barrel-4.mp4" aria-label="四台 Go2 + D1 从四侧夹持圆桶并抬升搬运"></video>
+  <figcaption><strong>四机 · 圆桶</strong><span>四侧末端夹持 · 前进 0.69 m</span></figcaption>
 </figure>
 </div>
 <h3>抬升高度和前向位移</h3>
 <div class="pair transport-traces">
 <figure data-zoom-image="decplm/replay-lift.png">
-  <a href="assets/decplm/replay-lift.png"><img src="assets/decplm/replay-lift.png" width="992" height="584" loading="lazy" decoding="async" alt="五个场景的载荷根部抬升量，六机长箱移动时约保持 13 cm"></a>
+  <a href="assets/decplm/replay-lift.png?v=2"><img src="assets/decplm/replay-lift.png?v=2" width="992" height="584" loading="lazy" decoding="async" alt="五个场景的载荷根部抬升量，六机长箱移动时约保持 13 cm"></a>
   <figcaption>根部高度相对首帧的变化。阴影为独立抬升阶段。</figcaption>
 </figure>
 <figure data-zoom-image="decplm/replay-move.png">
-  <a href="assets/decplm/replay-move.png"><img src="assets/decplm/replay-move.png" width="992" height="584" loading="lazy" decoding="async" alt="五个场景在移动阶段的前向位移，灰色虚线为恒速参考值"></a>
+  <a href="assets/decplm/replay-move.png?v=2"><img src="assets/decplm/replay-move.png?v=2" width="992" height="584" loading="lazy" decoding="async" alt="五个场景在移动阶段的前向位移，灰色虚线为恒速参考值"></a>
   <figcaption>从移动指令发出时计位移。灰虚线是 0.19 m/s 参考。</figcaption>
 </figure>
 </div>
@@ -107,13 +107,10 @@
 </ul>
 
 <h2 id="curriculum">三阶段课程训练</h2>
-<p>从夹持到搬运，各阶段接续上一阶段的检查点。</p>
-<figure class="transport-curriculum" data-zoom-image="decplm/curriculum-reward.png">
-  <a href="assets/decplm/curriculum-reward.png"><picture>
-    <source media="(max-width:650px)" srcset="assets/decplm/curriculum-stacked.png" width="896" height="1400">
-    <img src="assets/decplm/curriculum-reward.png" width="2000" height="616" loading="lazy" decoding="async" alt="累计 0 到 7500 轮的三阶段奖励图，第 500 轮切换到 Lift，第 1500 轮切换到 Move，每段使用独立纵轴">
-  </picture></a>
-  <figcaption>第 500、1,500 轮切换阶段。浅线是逐轮平均奖励，深线是分段中位数。各阶段采用独立纵轴。</figcaption>
+<p>关键点奖励课程依次训练夹持、抬升与搬运，并与直接训练的 MAPPO 基线对照。</p>
+<figure class="transport-curriculum" data-zoom-image="decplm/curriculum-vs-mappo.png">
+  <a href="assets/decplm/curriculum-vs-mappo.png"><img src="assets/decplm/curriculum-vs-mappo.png" width="1764" height="909" loading="lazy" decoding="async" alt="关键点课程的夹持、抬升、搬运三条奖励曲线与直接训练 MAPPO 基线在同一坐标系对比，统一显示前 5000 轮"></a>
+  <figcaption>统一展示前 5,000 轮，第 500 和 1,500 轮切换阶段。浅线为逐轮平均回合奖励，深线为分段中位数，夹持每 25 轮、其余每 50 轮统计。各课程阶段的奖励项与回合长度随任务调整。</figcaption>
 </figure>
 <h3>KL 调节 PPO 学习率</h3>
 <p>目标 KL 为 0.01。按小批次平均 KL 改变更新步幅。</p>
